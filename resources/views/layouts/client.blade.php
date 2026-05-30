@@ -37,6 +37,8 @@
             <main>
                 {{ $slot }}
             </main>
+
+            @include('layouts.includes.client.footer')
         </div>
 
         @stack('modals')
