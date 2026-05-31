@@ -1,9 +1,9 @@
 @php
     $links = [
         [
-            'name' => 'Dashboard',
-            'route' => '#',
-            'active' => true,
+            'name' => 'Propiedades',
+            'route' => route('client.accommodations.index'),
+            'active' => request()->routeIs('client.accommodations.index'),
         ],
     ];
 @endphp
