@@ -24,13 +24,14 @@
                     <x-label value="Nombre de la propiedad" class="mb-1" 
                         for="name" />
                     <x-input placeholder="Nombre de la propiedad" class="w-full" 
-                        name="name" value="{{ old('name') }}"/>
+                        name="name" value="{{ old('name') }}"
+                        oninput="string_to_slug(this.value, '#slug')"/>
                 </div>
                 
                 <div class="mb-4">
                     <x-label value="Slug de la propiedad" class="mb-1" 
                         for="slug" />
-                    <x-input placeholder="Slug" class="w-full" 
+                    <x-input placeholder="Slug" class="w-full" id="slug"
                         name="slug" value="{{ old('slug') }}"/>
                 </div>
                 
