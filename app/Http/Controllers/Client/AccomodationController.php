@@ -16,7 +16,9 @@ class AccomodationController extends Controller
      */
     public function index()
     {
-        return view('client.accommodations.index',);
+        $accommodations = Accommodation::all();
+
+        return view('client.accommodations.index', compact('accommodations'));
     }
 
     /**
