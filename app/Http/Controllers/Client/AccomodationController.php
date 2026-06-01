@@ -8,6 +8,7 @@ use App\Models\Detail;
 use App\Models\Service;
 use App\Models\Tag;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class AccomodationController extends Controller
 {
@@ -79,7 +80,31 @@ class AccomodationController extends Controller
      */
     public function update(Request $request, Accommodation $accommodation)
     {
-        //
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'slug' => 'required|string|max:255|unique:accommodations,slug,' . $accommodation->id,
+            'summary' => 'required|string',
+            'description' => 'required|string',
+            'status' => 'required|integer',
+            'capacity' => 'required|integer',
+            'price' => 'required|numeric',
+            'locationURL' => 'required',
+        ]);
+
+        // if ($request->hasFile('image')) {
+        //     if ($accommodation->image) {
+        //         Storage::delete($accommodation->image);
+        //     }
+
+        //     $data['image_path'] = Storage::put('/images', $request->file('image'));
+        // }
+
+        $accommodation->update($data);
+
+        // session()->flash('flash.bannerStyle', 'danger');
+        session()->flash('flash.banner', 'Propiedad actualizada correctamente.');
+
+        return redirect()->route('client.accommodations.edit', $accommodation);
     }
 
     /**

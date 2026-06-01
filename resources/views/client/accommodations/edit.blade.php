@@ -42,7 +42,7 @@
 
                         <hr class="mt-2 mb-6">
 
-                        <x-validation-errors />
+                        <x-validation-errors class="mb-4" />
 
                         <div class="mb-4">
                             <x-label for="name" class="mb-1" value="Nombre de la Propiedad" />
@@ -62,6 +62,37 @@
                                 {{ old('summary', $accommodation->summary) }}
                             </x-textarea>
                         </div>
+                        
+                        <div class="mb-4 ckeditor">
+                            <x-label for="description" class="mb-1" value="Descripción de la propiedad" />
+                            <x-textarea name="description" class="w-full" id="editor">
+                                {{ old('description', $accommodation->description) }}
+                            </x-textarea>
+                        </div>
+
+                        <div class="mb-4">
+                            <x-label value="Estatus de la propiedad" class="mb-1" for="status" />
+                            <x-input placeholder="Estatus" class="w-full" name="status" value="{{ old('status', $accommodation->status) }}" />
+                        </div>
+
+                        <div class="mb-4">
+                            <x-label value="Capacidad de la propiedad" class="mb-1" for="capacity" />
+                            <x-input placeholder="Capacidad" class="w-full" name="capacity"
+                                value="{{ old('capacity', $accommodation->capacity) }}" />
+                        </div>
+
+                        <div class="mb-4">
+                            <x-label value="Precio por noche" class="mb-1" for="price" />
+                            <x-input placeholder="Precio por noche" class="w-full" name="price"
+                                value="{{ old('price', $accommodation->price) }}" />
+                        </div>
+
+                        <div class="mb-4">
+                            <x-label value="Ubicación (URL)" class="mb-1" for="locationURL" />
+                            <x-input placeholder="URL de la ubicacion" class="w-full" name="locationURL"
+                                value="{{ old('locationURL', $accommodation->locationURL) }}" />
+                        </div>
+
 
                         <div>
                             <p class="text-2xl font-semibold mb-2">
@@ -71,23 +102,24 @@
                             <div class="grid md:grid-cols-2 gap-4">
 
                                 <figure>
-                                    <img src="{{ $accommodation->image }}" alt="{{ $accommodation->name }}" class="w-full aspect-video object-cover object-center">
+                                    <img src="{{ $accommodation->image }}" alt="{{ $accommodation->name }}"
+                                        class="w-full aspect-video object-cover object-center">
                                 </figure>
 
                                 <div>
-                                    <p class="mb-2">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ullam similique est tempora repellendus natus maxime quam placeat eius dolore enim odio suscipit.</p>
-                                    
+                                    <p class="mb-2">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ullam
+                                        similique est tempora repellendus natus maxime quam placeat eius dolore enim
+                                        odio suscipit.</p>
+
                                     <label>
 
                                         <span class="btn btn-blue md:hidden cursor-pointer">
                                             Selecciona una imagen
                                         </span>
 
-                                        <input class="hidden md:block" 
-                                            type="file" accept="image/*"
-                                            name="image">
+                                        <input class="hidden md:block" type="file" accept="image/*" name="image">
                                     </label>
-                                    
+
                                     <div class="flex md:justify-end mt-4">
                                         <x-button>
                                             Guardar cambios
@@ -107,7 +139,18 @@
             </div>
 
         </div>
-    </x-container>
+    </x-container>s
 
+    @push('js')
+        <script src="{{ asset('vendor/ckeditor5-build-classic/build/ckeditor.js') }}"></script>
+
+        <script>
+            ClassicEditor
+                .create(document.querySelector('#editor'))
+                .catch(error => {
+                    console.error(error);
+                });
+        </script>
+    @endpush
 
 </x-client-layout>
