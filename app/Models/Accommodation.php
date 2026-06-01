@@ -21,10 +21,12 @@ class Accommodation extends Model
         'capacity',
         'price',
         'locationURL',
+        'published_at',
     ];
 
     protected $casts = [
         'status' => AccommodationStatus::class,
+        'published_at' => 'datetime',
     ];
 
     protected function image():Attribute{

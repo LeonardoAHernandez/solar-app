@@ -67,7 +67,11 @@ class AccomodationController extends Controller
      */
     public function edit(Accommodation $accommodation)
     {
-        //
+        $details = Detail::all();
+        $tags = Tag::all();
+        $services = Service::all();
+
+        return view('client.accommodations.edit', compact('accommodation', 'details', 'tags', 'services'));
     }
 
     /**

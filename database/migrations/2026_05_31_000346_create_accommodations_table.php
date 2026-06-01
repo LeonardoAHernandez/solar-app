@@ -27,6 +27,8 @@ return new class extends Migration
             $table->float('price');
             $table->text('locationURL');
 
+            $table->timestamp('published_at')->nullable();
+
             $table->timestamps();
         });
     }
