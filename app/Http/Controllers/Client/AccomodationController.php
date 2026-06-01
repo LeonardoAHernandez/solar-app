@@ -114,4 +114,8 @@ class AccomodationController extends Controller
     {
         //
     }
+
+    public function images(Accommodation $accommodation){
+        return view('client.accommodations.images', compact('accommodation'));
+    }
 }

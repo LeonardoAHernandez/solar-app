@@ -12,3 +12,6 @@ Route::redirect('/', '/client/accommodations')
 
 // Alojamiento
 Route::resource('accommodations', AccomodationController::class);
+
+Route::get('accommodations/{accommodation}/images', [AccomodationController::class, 'images'])
+    ->name('accommodations.images');
