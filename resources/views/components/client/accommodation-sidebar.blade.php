@@ -12,6 +12,11 @@
             'url' => route('client.accommodations.images', $accommodation),
             'active' => request()->routeIs('client.accommodations.images'),
         ],
+        [
+            'name' => 'Etiquetas',
+            'url' => route('client.accommodations.tags.index', $accommodation),
+            'active' => request()->routeIs('client.accommodations.tags.index'),
+        ],
     ];
 @endphp
 
