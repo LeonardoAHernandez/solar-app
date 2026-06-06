@@ -104,4 +104,37 @@ class DetailController extends Controller
     {
         //
     }
+
+    /**
+     * NUEVO: Crea un detalle desde cero o actualiza el nombre de uno existente.
+     */
+    public function createOrUpdateDetail(Request $request)
+    {
+        $request->validate([
+            'detail_id' => 'nullable|exists:details,id', // Si viene, es edición; si no, es creación
+            'name'      => 'required|string|max:255|unique:details,name,' . $request->detail_id,
+        ], [
+            'name.unique' => 'Ese detalle ya existe en el catálogo.',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            // updateOrCreate busca por ID; si lo encuentra actualiza el nombre, si no, lo crea.
+            Detail::updateOrCreate(
+                ['id' => $request->detail_id],
+                ['name' => $request->name]
+            );
+
+            DB::commit();
+
+            $message = $request->detail_id ? '¡Detalle modificado con éxito!' : '¡Nuevo detalle agregado al catálogo!';
+            return redirect()->back()->with('success', $message);
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Error al gestionar el catálogo: ' . $e->getMessage());
+        }
+    }
+
 }

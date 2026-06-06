@@ -34,6 +34,7 @@ Route::post('accommodations/{accommodation}/services', [ServiceController::class
 // Rutas para la gestión de Detalles (cantidades) del Alojamiento
 Route::get('accommodations/{accommodation}/details', [DetailController::class, 'index'])
     ->name('accommodations.details.index');
-
 Route::post('accommodations/{accommodation}/details', [DetailController::class, 'store'])
     ->name('accommodations.details.store');
+// Aadministrar el catálogo global de detalles
+    Route::post('details/manage', [DetailController::class, 'createOrUpdateDetail'])->name('details.manage');

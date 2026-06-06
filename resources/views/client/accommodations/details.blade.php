@@ -8,11 +8,21 @@
 
     <x-client.accommodation-sidebar :accommodation="$accommodation">
 
-        <p class="text-2xl font-semibold">
-            Detalles de la Propiedad
-        </p>
-
-        <hr class="mt-2 mb-6">
+        {{-- Encabezado con Botón de Administración --}}
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-2">
+            <div>
+                <p class="text-2xl font-semibold">Detalles de la Propiedad</p>
+                <p class="text-sm text-gray-500">Especifica los números de lo que incluye este alojamiento.</p>
+            </div>
+            <div>
+                {{-- Botón para abrir el modal --}}
+                <button type="button" id="btn-open-modal" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring ring-gray-300 disabled:opacity-25 transition ease-in-out duration-150">
+                    ⚙️ Administrar Catálogo
+                </button>
+            </div>
+        </div>
+        
+        <hr class="mb-6">
 
         {{-- Alertas del Sistema --}}
         @if (session('success'))
@@ -26,52 +36,163 @@
             </div>
         @endif
 
+        {{-- FORMULARIO PRINCIPAL: Cantidades de la propiedad --}}
         <form action="{{ route('client.accommodations.details.store', $accommodation) }}" method="POST">
             @csrf
 
-            <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm mb-6">
-                <h3 class="text-lg font-bold text-gray-700 mb-4 border-b pb-2">
-                    Especifica las cantidades para cada detalle (ej. Habitaciones, Camas, Baños)
-                </h3>
-
-                {{-- Grid de controles numéricos --}}
+            <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     @foreach ($allDetails as $detail)
-                        {{-- Buscamos la cantidad actual en el array, si no existe inicializa en 0 --}}
                         @php
                             $currentQuantity = $currentDetails[$detail->id] ?? 0;
                         @endphp
 
                         <div class="flex items-center justify-between gap-4 p-3 border border-gray-100 rounded-xl bg-gray-50/50 hover:bg-gray-50 transition">
-                            
-                            <span class="text-sm font-medium text-gray-700 select-none">
+                            <span class="text-sm font-medium text-gray-700">
                                 {{ $detail->name }}
                             </span>
-
-                            {{-- Input numérico asociado al ID del detalle mediante la clave del array --}}
                             <input type="number" 
                                    name="quantities[{{ $detail->id }}]" 
                                    value="{{ $currentQuantity }}"
                                    min="0"
-                                   placeholder="0"
-                                   class="w-20 text-center h-9 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-sm font-semibold">
+                                   class="w-20 text-center h-9 border border-gray-300 rounded-lg focus:ring-blue-500 text-sm font-semibold">
                         </div>
                     @endforeach
                 </div>
-                
-                <p class="text-xs text-gray-400 mt-4">
-                    * Los campos que permanezcan o se configuren en 0 no se guardarán ni se mostrarán en la propiedad.
-                </p>
             </div>
 
-            {{-- Botón de envío --}}
-            <div class="flex justify-end">
-                <x-button type="submit">
-                    Guardar Detalles
-                </x-button>
+            <div class="flex justify-end mt-4">
+                <x-button type="submit">Guardar Cantidades</x-button>
             </div>
         </form>
 
+
+        {{-- ========================================== --}}
+        {{-- MODAL FLOTANTE DE ADMINISTRACIÓN DE CATÁLOGO --}}
+        {{-- ========================================== --}}
+        <div id="catalog-modal" class="fixed inset-0 z-50 overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                
+                {{-- Fondo oscuro difuminado --}}
+                <div id="modal-overlay" class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+
+                <span class="hidden sm:inline-block sm:align-middle sm:min-h-screen" aria-hidden="true">&#8203;</span>
+
+                {{-- Cuerpo del Modal --}}
+                <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                    
+                    <div class="bg-white px-6 pt-5 pb-4 sm:p-6 sm:pb-4">
+                        <div class="flex justify-between items-center border-b pb-3 mb-4">
+                            <h3 class="text-lg font-bold text-gray-900" id="modal-title">
+                                Administrar Catálogo de Detalles
+                            </h3>
+                            <button type="button" id="btn-close-modal-x" class="text-gray-400 hover:text-gray-600 font-bold text-xl">&times;</button>
+                        </div>
+
+                        {{-- Formulario de Creación / Edición integrado --}}
+                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 mb-6">
+                            <h4 id="form-action-title" class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Agregar Nuevo Detalle</h4>
+                            
+                            <form action="{{ route('client.details.manage') }}" method="POST" id="manage-detail-form">
+                                @csrf
+                                <input type="hidden" name="detail_id" id="detail_id" value="">
+
+                                <div class="flex gap-2">
+                                    <input type="text" 
+                                           name="name" 
+                                           id="detail_name" 
+                                           required
+                                           placeholder="Ej. Jacuzzi, Terraza, Sofás"
+                                           class="flex-1 h-10 border border-gray-300 rounded-lg px-3 focus:ring-blue-500 text-sm">
+                                    
+                                    <x-button type="submit" id="btn-submit">
+                                        <span id="btn-submit-text">Agregar</span>
+                                    </x-button>
+                                </div>
+                                <button type="button" id="btn-cancel-edit" class="text-xs text-red-500 hover:underline mt-2 hidden">
+                                    ❌ Cancelar edición (volver a crear nuevo)
+                                </button>
+                            </form>
+                        </div>
+
+                        {{-- Listado de opciones actuales dentro del modal --}}
+                        <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Opciones Disponibles Actuales</h4>
+                        <div class="max-h-52 overflow-y-auto border border-gray-100 rounded-lg divide-y divide-gray-100 px-3 bg-white">
+                            @foreach ($allDetails as $detail)
+                                <div class="flex items-center justify-between py-2">
+                                    <span class="text-sm text-gray-700 font-medium">{{ $detail->name }}</span>
+                                    <button type="button" 
+                                            onclick="setEditMode({{ $detail->id }}, '{{ addslashes($detail->name) }}')"
+                                            class="text-xs bg-gray-100 hover:bg-blue-100 text-gray-600 hover:text-blue-700 px-2.5 py-1 rounded-md font-medium transition">
+                                        Editar
+                                    </button>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    {{-- Botón de cerrar inferior --}}
+                    <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse border-t">
+                        <button type="button" id="btn-close-modal-footer" class="w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                            Cerrar
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
     </x-client.accommodation-sidebar>
+
+    {{-- Lógica JavaScript para control del Modal y del Formulario --}}
+    <script>
+        // Elementos del Modal
+        const modal = document.getElementById('catalog-modal');
+        const btnOpenModal = document.getElementById('btn-open-modal');
+        const btnCloseX = document.getElementById('btn-close-modal-x');
+        const btnCloseFooter = document.getElementById('btn-close-modal-footer');
+        const overlay = document.getElementById('modal-overlay');
+
+        // Elementos del Formulario Dinámico
+        const formActionTitle = document.getElementById('form-action-title');
+        const detailIdInput = document.getElementById('detail_id');
+        const detailNameInput = document.getElementById('detail_name');
+        const btnSubmitText = document.getElementById('btn-submit-text');
+        const btnCancelEdit = document.getElementById('btn-cancel-edit');
+
+        // --- FUNCIONES PARA ABRIR / CERRAR MODAL ---
+        function openModal() {
+            modal.classList.remove('hidden');
+        }
+        function closeModal() {
+            modal.classList.add('hidden');
+            resetForm(); // Limpiamos estados de edición si cierran el modal
+        }
+
+        btnOpenModal.addEventListener('click', openModal);
+        btnCloseX.addEventListener('click', closeModal);
+        btnCloseFooter.addEventListener('click', closeModal);
+        overlay.addEventListener('click', closeModal); // Cerrar si hacen clic fuera del cuadro blanco
+
+        // --- LÓGICA DE EDICIÓN DEL FORMULARIO ---
+        function setEditMode(id, name) {
+            formActionTitle.innerText = "✏️ Modificar Nombre de Detalle";
+            detailIdInput.value = id;
+            detailNameInput.value = name;
+            btnSubmitText.innerText = "Actualizar";
+            btnCancelEdit.classList.remove('hidden');
+            detailNameInput.focus();
+        }
+
+        function resetForm() {
+            formActionTitle.innerText = "Agregar Nuevo Detalle";
+            detailIdInput.value = "";
+            detailNameInput.value = "";
+            btnSubmitText.innerText = "Agregar";
+            btnCancelEdit.classList.add('hidden');
+        }
+
+        btnCancelEdit.addEventListener('click', resetForm);
+    </script>
 
 </x-client-layout>
