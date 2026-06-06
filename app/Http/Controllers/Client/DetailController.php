@@ -1,0 +1,107 @@
+<?php
+
+namespace App\Http\Controllers\Client;
+
+use App\Http\Controllers\Controller;
+use App\Models\Accommodation;
+use App\Models\Detail;
+use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
+class DetailController extends Controller
+{
+    /**
+     * Muestra el listado de todos los detalles con sus cantidades actuales.
+     */
+    public function index(Accommodation $accommodation)
+    {
+        // 1. Obtener todos los detalles maestros disponibles
+        $allDetails = Detail::all();
+
+        // 2. Obtener los detalles asociados a este alojamiento con su cantidad en el pivote
+        // Formato devuelto: [id_del_detalle => cantidad]
+        $currentDetails = $accommodation->details->pluck('pivot.quantity', 'id')->toArray();
+
+        return view('client.accommodations.details', compact('accommodation', 'allDetails', 'currentDetails'));
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Sincroniza las cantidades, guardando únicamente los que sean mayores a 0.
+     */
+    public function store(Request $request, Accommodation $accommodation)
+    {
+        $request->validate([
+            'quantities'   => 'nullable|array',
+            'quantities.*' => 'nullable|integer|min:0',
+        ]);
+
+        // Estructura requerida por Laravel para guardar datos en pivote: [ id => ['quantity' => valor] ]
+        $syncData = [];
+
+        if ($request->has('quantities')) {
+            foreach ($request->input('quantities') as $detailId => $quantity) {
+                // REGLA DE NEGOCIO: Únicamente guardamos si el número ingresado es mayor que 0
+                if ($quantity > 0) {
+                    $syncData[$detailId] = [
+                        'quantity' => $quantity
+                    ];
+                }
+            }
+        }
+
+        try {
+            DB::beginTransaction();
+
+            // sync() inserta/actualiza los mayores a 0 y elimina automáticamente los que quedaron en 0
+            $accommodation->details()->sync($syncData);
+
+            DB::commit();
+
+            return redirect()->back()->with('success', '¡Detalles y cantidades actualizados con éxito!');
+        } catch (Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Ocurrió un error al guardar los detalles: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(Detail $detail)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(Detail $detail)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, Detail $detail)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Detail $detail)
+    {
+        //
+    }
+}

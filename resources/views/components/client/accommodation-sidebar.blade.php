@@ -8,9 +8,14 @@
             'active' => request()->routeIs('client.accommodations.edit'),
         ],
         [
-            'name' => 'Imagenes',
-            'url' => route('client.accommodations.images', $accommodation),
-            'active' => request()->routeIs('client.accommodations.images'),
+            'name' => 'Detalles',
+            'url' => route('client.accommodations.details.index', $accommodation),
+            'active' => request()->routeIs('client.accommodations.details.index'),
+        ],
+        [
+            'name' => 'Servicios',
+            'url' => route('client.accommodations.services.index', $accommodation),
+            'active' => request()->routeIs('client.accommodations.services.index'),
         ],
         [
             'name' => 'Etiquetas',
@@ -18,9 +23,9 @@
             'active' => request()->routeIs('client.accommodations.tags.index'),
         ],
         [
-            'name' => 'Servicios',
-            'url' => route('client.accommodations.services.index', $accommodation),
-            'active' => request()->routeIs('client.accommodations.services.index'),
+            'name' => 'Imagenes',
+            'url' => route('client.accommodations.images', $accommodation),
+            'active' => request()->routeIs('client.accommodations.images'),
         ],
     ];
 @endphp
@@ -28,11 +33,11 @@
 <x-container class="py-8">
 
     <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
-    
+
         <aside class="col-span-1">
-    
+
             <h1 class="text-xl font-semibold mb-4">Edición de Propiedad</h1>
-    
+
             <nav>
                 <ul class="space-y-2">
                     @foreach ($links as $link)
@@ -44,20 +49,19 @@
                     @endforeach
                 </ul>
             </nav>
-    
+
         </aside>
-    
+
         <div class="col-span-1 lg:col-span-4">
-    
+
             <div class="card">
-    
+
                 {{ $slot }}
-    
+
             </div>
-    
+
         </div>
-    
+
     </div>
 
 </x-container>
-

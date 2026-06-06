@@ -29,9 +29,10 @@ class Accommodation extends Model
         'published_at' => 'datetime',
     ];
 
-    protected function image():Attribute{
+    protected function image(): Attribute
+    {
         return new Attribute(
-            get: function(){
+            get: function () {
                 return $this->images()->first() ? Storage::url($this->images()->first()->image_path) : 'https://image.pngaaa.com/13/1887013-middle.png';
             }
         );
@@ -51,7 +52,7 @@ class Accommodation extends Model
 
     public function details()
     {
-        return $this->belongsToMany(Detail::class);
+        return $this->belongsToMany(Detail::class)->withPivot('quantity');
     }
 
     public function services()
