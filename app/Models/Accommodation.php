@@ -33,7 +33,16 @@ class Accommodation extends Model
     {
         return new Attribute(
             get: function () {
-                return $this->images()->first() ? Storage::url($this->images()->first()->image_path) : 'https://image.pngaaa.com/13/1887013-middle.png';
+                // 1. Buscamos primero la imagen configurada como portada/principal
+                $principalImage = $this->images()->where('type', 'principal')->first();
+
+                // 2. Si no hay principal, usamos la primera de la galería como respaldo
+                $fallbackImage = $principalImage ?? $this->images()->first();
+
+                // 3. Retornamos la URL correspondiente o la imagen por defecto
+                return $fallbackImage
+                    ? Storage::url($fallbackImage->image_path)
+                    : 'https://image.pngaaa.com/13/1887013-middle.png';
             }
         );
     }
