@@ -71,8 +71,13 @@
                     value="{{ old('locationURL', $accommodation->locationURL) }}" />
             </div>
 
+            <div class="flex md:justify-end mt-4">
+                <x-button>
+                    Guardar cambios
+                </x-button>
+            </div>
 
-            <div>
+            {{-- <div>
                 <p class="text-2xl font-semibold mb-2">
                     Imagen de la propiedad
                 </p>
@@ -108,7 +113,7 @@
 
                 </div>
 
-            </div>
+            </div> --}}
 
 
         </form>

@@ -26,8 +26,8 @@
                         <div class="flex-1">
                             <div class="py-4 px-8">
 
-                                <div class="grid md:grid-cols-9">
-                                    <div class="md:col-span-3">
+                                <div class="grid md:grid-cols-9 gap-4">
+                                    <div class="md:col-span-2">
                                         <h1>{{ $accommodation->name }}</h1>
 
                                         @switch($accommodation->status->name)
@@ -50,35 +50,32 @@
                                                 
                                         @endswitch
                                     </div>
+                                    
+                                    <div class="hidden md:block col-span-3">
+                                        <p class="text-sm">
+                                            {{ $accommodation->summary }}
+                                        </p>
+                                    </div>
     
                                     <div class="hidden md:block col-span-2">
                                         <p class="text-sm font-bold">
-                                            100 USD
+                                            Precio:
                                         </p>
-
+                                        
                                         <p class="mb-1 text-sm">
-                                            Ganado este mes
+                                            {{ $accommodation->price }} MXN/Noche
                                         </p>
                                         
                                         <p class="text-sm font-bold">
-                                            1000 USD
+                                            Capacidad:
                                         </p>
 
                                         <p class="text-sm">
-                                            Ganado en total
+                                            {{ $accommodation->capacity }} personas
                                         </p>
 
                                     </div>
     
-                                    <div class="hidden md:block col-span-2">
-                                        <p>
-                                            50
-                                        </p>
-
-                                        <p class="text-sm">
-                                            Reservas este mes
-                                        </p>
-                                    </div>
                                     
                                     <div class="hidden md:block col-span-2">
     

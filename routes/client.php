@@ -1,17 +1,18 @@
 <?php
 
-use App\Http\Controllers\Client\AccomodationController;
+use App\Http\Controllers\Client\AccommodationController;
+use App\Http\Controllers\Client\ImageController;
 use Illuminate\Support\Facades\Route;
-
-// Route::get('/', function () {
-//     return view('client.dashboard');
-// })->name('home');
 
 Route::redirect('/', '/client/accommodations')
     ->name('home');
 
 // Alojamiento
-Route::resource('accommodations', AccomodationController::class);
+Route::resource('accommodations', AccommodationController::class);
 
-Route::get('accommodations/{accommodation}/images', [AccomodationController::class, 'images'])
-    ->name('accommodations.images');
+Route::get('accommodations/{accommodation}/images', [ImageController::class, 'index'])
+->name('accommodations.images');
+
+
+// Rutas de imágenes
+Route::resource('images', ImageController::class);

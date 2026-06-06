@@ -10,7 +10,7 @@ use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class AccomodationController extends Controller
+class AccommodationController extends Controller
 {
     /**
      * Display a listing of the resource.
