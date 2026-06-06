@@ -35,48 +35,42 @@ class ImageController extends Controller
      */
     public function store(Request $request)
     {
-        // 1. Validar que se reciba un array de imágenes y el ID de la acomodación
         $request->validate([
             'images'           => 'required|array',
-            'images.*'         => 'image|mimes:jpeg,png,jpg,webp|max:2048', // Regla para cada imagen del array
+            'images.*'         => 'image|mimes:jpeg,png,jpg,webp|max:2048',
             'accommodation_id' => 'required|exists:accommodations,id',
         ]);
 
-        // Buscamos la acomodación para usar su relación (o puedes guardar directo con el modelo Image)
         $accommodation = Accommodation::findOrFail($request->accommodation_id);
-
-        // Carpeta destino dentro de storage/app/public/
         $folderPath = 'accommodations/properties';
 
-        // 2. Verificar si el request trae archivos en el array 'images'
         if ($request->hasFile('images')) {
+            // Evaluamos si ya cuenta con una imagen principal
+            $hasPrincipal = $accommodation->images()->where('type', 'principal')->exists();
+            $currentImagesCount = $accommodation->images()->count();
 
             foreach ($request->file('images') as $index => $file) {
-
-                // 3. Renombrar el archivo de forma única
                 $extension = $file->getClientOriginalExtension();
                 $fileName = 'accommodation_' . $accommodation->id . '_' . uniqid() . '.' . $extension;
-
-                // 4. Guardar físicamente el archivo en storage/app/public/accommodations/properties
+                
                 $file->storePubliclyAs($folderPath, $fileName, 'public');
 
-                // 5. Determinar la posición de manera dinámica
-                // Si la vista no manda una posición específica, usamos el índice del ciclo ($index) 
-                // sumado a las imágenes que ya tenga la propiedad para no duplicar posiciones.
-                $currentImagesCount = $accommodation->images()->count();
-                $position = $request->input('position', $currentImagesCount + $index);
+                // Si no tiene principal, la primera de la tanda será la principal. Las demás serán galería.
+                $type = (!$hasPrincipal && $index === 0) ? 'principal' : 'galeria';
+                
+                // La posición solo importa para las de galería, la principal puede ser 0
+                $position = $type === 'principal' ? 0 : ($currentImagesCount + $index);
 
-                // 6. Guardar en la base de datos usando la relación de Eloquent
                 $accommodation->images()->create([
                     'image_path'       => $folderPath . '/' . $fileName,
-                    'type'             => $file->getClientMimeType(), // Guarda ej: 'image/jpeg' o puedes usar $extension
+                    'type'             => $type,
                     'position'         => $position,
                     'accommodation_id' => $accommodation->id,
                 ]);
             }
         }
 
-        return redirect()->back()->with('success', '¡Imágenes subidas y registradas con éxito!');
+        return redirect()->back()->with('success', '¡Imágenes subidas con éxito!');
     }
 
     /**
@@ -96,11 +90,45 @@ class ImageController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Actualiza el tipo y la posición de una imagen individual de forma segura.
      */
     public function update(Request $request, Image $image)
     {
-        //
+        $request->validate([
+            'type'     => 'required|in:principal,galeria',
+            'position' => 'required|integer|min:0',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            // REGLA DE NEGOCIO: Si esta imagen pasa a ser "principal",
+            // quitamos la principal anterior de este alojamiento para que no haya duplicados.
+            if ($request->type === 'principal') {
+                Image::where('accommodation_id', $image->accommodation_id)
+                    ->where('type', 'principal')
+                    ->update(['type' => 'galeria', 'position' => 1]); // La mandamos a la galería
+
+                // La nueva principal no necesita posición de orden de catálogo
+                $image->update([
+                    'type' => 'principal',
+                    'position' => 0
+                ]);
+            } else {
+                // Si solo cambia posición en la galería
+                $image->update([
+                    'type' => 'galeria',
+                    'position' => $request->position
+                ]);
+            }
+
+            DB::commit();
+            return redirect()->back()->with('success', '¡Ajustes de la imagen actualizados!');
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Error al actualizar la imagen: ' . $e->getMessage());
+        }
     }
 
     /**
