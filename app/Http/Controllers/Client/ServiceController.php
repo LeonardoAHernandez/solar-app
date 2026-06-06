@@ -89,4 +89,35 @@ class ServiceController extends Controller
     {
         //
     }
+
+    /**
+     * NUEVO: Crea un servicio desde cero o actualiza el nombre de uno existente en el catálogo maestro.
+     */
+    public function createOrUpdateService(Request $request)
+    {
+        $request->validate([
+            'service_id' => 'nullable|exists:services,id', // Si viene, edita; si no, crea
+            'name'       => 'required|string|max:255|unique:services,name,' . $request->service_id,
+        ], [
+            'name.unique' => 'Ese servicio ya existe en el catálogo.',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            // Busca por ID para actualizar, o crea uno nuevo si el ID está vacío
+            Service::updateOrCreate(
+                ['id' => $request->service_id],
+                ['name' => $request->name]
+            );
+
+            DB::commit();
+
+            $message = $request->service_id ? '¡Servicio modificado con éxito!' : '¡Nuevo servicio agregado al catálogo!';
+            return redirect()->back()->with('success', $message);
+        } catch (Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Error al gestionar el catálogo: ' . $e->getMessage());
+        }
+    }
 }
