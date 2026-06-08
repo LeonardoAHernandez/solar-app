@@ -7,8 +7,9 @@ use App\Http\Controllers\Client\ServiceController;
 use App\Http\Controllers\Client\TagController;
 use Illuminate\Support\Facades\Route;
 
-Route::redirect('/', '/client/accommodations')
-    ->name('home');
+Route::get('/', function() {
+    return redirect()->route('client.accommodations.index');
+})->name('home');
 
 // Alojamiento
 Route::resource('accommodations', AccommodationController::class);
