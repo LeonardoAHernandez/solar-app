@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Client;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Accommodation;
@@ -25,7 +25,7 @@ class TagController extends Controller
         $selectedTagIds = $accommodation->tags()->pluck('tags.id')->toArray();
 
         // Enviamos $categories a la vista
-        return view('client.accommodations.tags', compact('accommodation', 'groupedTags', 'categories', 'selectedTagIds'));
+        return view('admin.accommodations.tags', compact('accommodation', 'groupedTags', 'categories', 'selectedTagIds'));
     }
 
     /**

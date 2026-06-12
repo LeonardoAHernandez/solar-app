@@ -1,4 +1,4 @@
-<x-client-layout>
+<x-admin-layout>
 
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -6,7 +6,7 @@
         </h2>
     </x-slot>
 
-    <x-client.accommodation-sidebar :accommodation="$accommodation">
+    <x-admin.accommodation-sidebar :accommodation="$accommodation">
 
         {{-- Encabezado con Botón de Administración --}}
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-2">
@@ -37,7 +37,7 @@
         @endif
 
         {{-- FORMULARIO PRINCIPAL: Checkboxes de servicios --}}
-        <form action="{{ route('client.accommodations.services.store', $accommodation) }}" method="POST">
+        <form action="{{ route('admin.accommodations.services.store', $accommodation) }}" method="POST">
             @csrf
 
             <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
@@ -92,7 +92,7 @@
                         <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 mb-6">
                             <h4 id="form-action-title" class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Agregar Nuevo Servicio</h4>
                             
-                            <form action="{{ route('client.services.manage') }}" method="POST" id="manage-service-form">
+                            <form action="{{ route('admin.services.manage') }}" method="POST" id="manage-service-form">
                                 @csrf
                                 <input type="hidden" name="service_id" id="service_id" value="">
 
@@ -141,7 +141,7 @@
             </div>
         </div>
 
-    </x-client.accommodation-sidebar>
+    </x-admin.accommodation-sidebar>
 
     {{-- Lógica JavaScript para control del Modal y del Formulario --}}
     <script>
@@ -194,4 +194,4 @@
         btnCancelEdit.addEventListener('click', resetForm);
     </script>
 
-</x-client-layout>
+</x-admin-layout>

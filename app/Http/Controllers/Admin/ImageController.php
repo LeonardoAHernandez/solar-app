@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Client;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Accommodation;
@@ -19,7 +19,7 @@ class ImageController extends Controller
     {
         $images = $accommodation->images()->orderBy('position')->get();
 
-        return view('client.accommodations.images', compact('accommodation', 'images'));
+        return view('admin.accommodations.images', compact('accommodation', 'images'));
     }
 
     /**

@@ -1,4 +1,4 @@
-<x-client-layout>
+<x-admin-layout>
 
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -8,7 +8,7 @@
 
 
 
-    <x-client.accommodation-sidebar :accommodation="$accommodation">
+    <x-admin.accommodation-sidebar :accommodation="$accommodation">
 
         <p class="text-2xl font-semibold">
             Imágenes de la Propiedad
@@ -18,7 +18,7 @@
 
         <x-validation-errors class="mb-4" />
 
-        <form action="{{ route('client.images.store') }}" method="POST" enctype="multipart/form-data" class="mb-6">
+        <form action="{{ route('admin.images.store') }}" method="POST" enctype="multipart/form-data" class="mb-6">
             @csrf
 
             <input type="hidden" name="accommodation_id" value="{{ $accommodation->id }}">
@@ -71,7 +71,7 @@
                         </div>
 
                         {{-- Botón de eliminar (Esquina superior derecha) --}}
-                        <form action="{{ route('client.images.destroy', $image) }}" method="POST"
+                        <form action="{{ route('admin.images.destroy', $image) }}" method="POST"
                             class="absolute top-2 right-2 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity duration-200"
                             onsubmit="return confirm('¿Eliminar esta imagen por completo?');">
                             @csrf
@@ -95,7 +95,7 @@
                             </p>
                         @else
                             {{-- Formulario rápido para actualizar Posición --}}
-                            <form action="{{ route('client.images.update', $image) }}" method="POST"
+                            <form action="{{ route('admin.images.update', $image) }}" method="POST"
                                 class="flex items-center gap-1.5">
                                 @csrf
                                 @method('PUT')
@@ -117,7 +117,7 @@
                             </form>
 
                             {{-- Formulario rápido para cambiar a Principal --}}
-                            <form action="{{ route('client.images.update', $image) }}" method="POST">
+                            <form action="{{ route('admin.images.update', $image) }}" method="POST">
                                 @csrf
                                 @method('PUT')
                                 <input type="hidden" name="type" value="principal">
@@ -136,7 +136,7 @@
 
         </div>
 
-    </x-client.accommodation-sidebar>
+    </x-admin.accommodation-sidebar>
 
 
-</x-client-layout>
+</x-admin-layout>

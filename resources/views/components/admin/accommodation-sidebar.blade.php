@@ -4,28 +4,28 @@
     $links = [
         [
             'name' => 'Información General',
-            'url' => route('client.accommodations.edit', $accommodation),
-            'active' => request()->routeIs('client.accommodations.edit'),
+            'url' => route('admin.accommodations.edit', $accommodation),
+            'active' => request()->routeIs('admin.accommodations.edit'),
         ],
         [
             'name' => 'Detalles',
-            'url' => route('client.accommodations.details.index', $accommodation),
-            'active' => request()->routeIs('client.accommodations.details.index'),
+            'url' => route('admin.accommodations.details.index', $accommodation),
+            'active' => request()->routeIs('admin.accommodations.details.index'),
         ],
         [
             'name' => 'Servicios',
-            'url' => route('client.accommodations.services.index', $accommodation),
-            'active' => request()->routeIs('client.accommodations.services.index'),
+            'url' => route('admin.accommodations.services.index', $accommodation),
+            'active' => request()->routeIs('admin.accommodations.services.index'),
         ],
         [
             'name' => 'Etiquetas',
-            'url' => route('client.accommodations.tags.index', $accommodation),
-            'active' => request()->routeIs('client.accommodations.tags.index'),
+            'url' => route('admin.accommodations.tags.index', $accommodation),
+            'active' => request()->routeIs('admin.accommodations.tags.index'),
         ],
         [
             'name' => 'Imagenes',
-            'url' => route('client.accommodations.images', $accommodation),
-            'active' => request()->routeIs('client.accommodations.images'),
+            'url' => route('admin.accommodations.images', $accommodation),
+            'active' => request()->routeIs('admin.accommodations.images'),
         ],
     ];
 @endphp

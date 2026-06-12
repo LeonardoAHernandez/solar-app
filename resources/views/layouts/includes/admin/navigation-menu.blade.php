@@ -2,8 +2,8 @@
     $links = [
         [
             'name' => 'Propiedades',
-            'route' => route('client.accommodations.index'),
-            'active' => request()->routeIs('client.accommodations.index'),
+            'route' => route('admin.accommodations.index'),
+            'active' => request()->routeIs('admin.accommodations.index'),
         ],
     ];
 @endphp

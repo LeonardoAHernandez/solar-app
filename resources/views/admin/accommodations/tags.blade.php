@@ -1,4 +1,4 @@
-<x-client-layout>
+<x-admin-layout>
 
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -6,7 +6,7 @@
         </h2>
     </x-slot>
 
-    <x-client.accommodation-sidebar :accommodation="$accommodation">
+    <x-admin.accommodation-sidebar :accommodation="$accommodation">
 
         {{-- Encabezado con Botón de Administración --}}
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-2">
@@ -36,7 +36,7 @@
         @endif
 
         {{-- FORMULARIO PRINCIPAL: Cards de Categorías --}}
-        <form action="{{ route('client.accommodations.tags.store', $accommodation) }}" method="POST">
+        <form action="{{ route('admin.accommodations.tags.store', $accommodation) }}" method="POST">
             @csrf
 
             <div class="grid md:grid-cols-2 gap-6 mb-6">
@@ -100,7 +100,7 @@
                         <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 mb-6">
                             <h4 id="form-action-title" class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Agregar Nueva Etiqueta</h4>
                             
-                            <form action="{{ route('client.tags.manage') }}" method="POST" id="manage-tag-form" class="space-y-3">
+                            <form action="{{ route('admin.tags.manage') }}" method="POST" id="manage-tag-form" class="space-y-3">
                                 @csrf
                                 <input type="hidden" name="tag_id" id="tag_id" value="">
 
@@ -176,7 +176,7 @@
             </div>
         </div>
 
-    </x-client.accommodation-sidebar>
+    </x-admin.accommodation-sidebar>
 
     {{-- Lógica JavaScript para control del Modal, Formulario y Checkboxes Únicos --}}
     <script>
@@ -271,4 +271,4 @@
         });
     </script>
 
-</x-client-layout>
+</x-admin-layout>

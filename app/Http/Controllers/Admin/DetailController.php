@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Client;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Accommodation;
@@ -23,7 +23,7 @@ class DetailController extends Controller
         // Formato devuelto: [id_del_detalle => cantidad]
         $currentDetails = $accommodation->details->pluck('pivot.quantity', 'id')->toArray();
 
-        return view('client.accommodations.details', compact('accommodation', 'allDetails', 'currentDetails'));
+        return view('admin.accommodations.details', compact('accommodation', 'allDetails', 'currentDetails'));
     }
 
     /**

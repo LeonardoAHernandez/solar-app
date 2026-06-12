@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Client;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Accommodation;
@@ -22,7 +22,7 @@ class ServiceController extends Controller
         // 2. Obtener los IDs de los servicios que este alojamiento ya tiene asociados
         $selectedServiceIds = $accommodation->services()->pluck('services.id')->toArray();
 
-        return view('client.accommodations.services', compact('accommodation', 'services', 'selectedServiceIds'));
+        return view('admin.accommodations.services', compact('accommodation', 'services', 'selectedServiceIds'));
     }
 
     /**

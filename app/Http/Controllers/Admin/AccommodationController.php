@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Client;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Accommodation;
@@ -57,7 +57,7 @@ class AccommodationController extends Controller
         $allServices = Service::orderBy('name')->get();
         $allTags = Tag::orderBy('category')->orderBy('name')->get()->groupBy('category');
 
-        return view('client.accommodations.index', compact('accommodations', 'allServices', 'allTags'));
+        return view('admin.accommodations.index', compact('accommodations', 'allServices', 'allTags'));
     }
 
     /**
@@ -69,7 +69,7 @@ class AccommodationController extends Controller
         $tags = Tag::all();
         $services = Service::all();
 
-        return view('client.accommodations.create', compact('details', 'tags', 'services'));
+        return view('admin.accommodations.create', compact('details', 'tags', 'services'));
     }
 
     /**
@@ -90,7 +90,7 @@ class AccommodationController extends Controller
 
         $accommodation = Accommodation::create($data);
 
-        return redirect()->route('client.accommodations.edit', $accommodation);
+        return redirect()->route('admin.accommodations.edit', $accommodation);
     }
 
     /**
@@ -110,7 +110,7 @@ class AccommodationController extends Controller
         $tags = Tag::all();
         $services = Service::all();
 
-        return view('client.accommodations.edit', compact('accommodation', 'details', 'tags', 'services'));
+        return view('admin.accommodations.edit', compact('accommodation', 'details', 'tags', 'services'));
     }
 
     /**
@@ -142,7 +142,7 @@ class AccommodationController extends Controller
         // session()->flash('flash.bannerStyle', 'danger');
         session()->flash('flash.banner', 'Propiedad actualizada correctamente.');
 
-        return redirect()->route('client.accommodations.edit', $accommodation);
+        return redirect()->route('admin.accommodations.edit', $accommodation);
     }
 
     /**
@@ -155,6 +155,6 @@ class AccommodationController extends Controller
 
     public function images(Accommodation $accommodation)
     {
-        return view('client.accommodations.images', compact('accommodation'));
+        return view('admin.accommodations.images', compact('accommodation'));
     }
 }

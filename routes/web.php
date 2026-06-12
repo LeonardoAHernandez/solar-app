@@ -10,7 +10,7 @@ Route::get('/', function () {
         $user = Auth::user();
 
         if ($user->isAdmin()) {
-            return redirect()->route('client.accommodations.index');
+            return redirect()->route('admin.accommodations.index');
         }
     }
 
