@@ -17,14 +17,15 @@ return new class extends Migration
             $table->string('name');
             $table->string('slug')->unique();
 
-            $table->text('summary');
-            $table->text('description');
+            $table->text('summary')->nullable();
+            $table->text('description')->nullable();
 
             $table->integer('status')->default(1);
 
             $table->integer('capacity');
 
             $table->float('price');
+            $table->float('price_highseason');
             $table->text('locationURL');
 
             $table->timestamp('published_at')->nullable();

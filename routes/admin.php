@@ -46,3 +46,8 @@ Route::post('accommodations/{accommodation}/details', [DetailController::class, 
     ->name('accommodations.details.store');
 // Aadministrar el catálogo global de detalles
 Route::post('details/manage', [DetailController::class, 'createOrUpdateDetail'])->name('details.manage');
+
+
+// Ruta para manejar el cambio de estado del alojamiento (borrador/activo/inactivo)
+Route::patch('accommodations/{accommodation}/status', [AccommodationController::class, 'updateStatus'])
+    ->name('accommodations.status');

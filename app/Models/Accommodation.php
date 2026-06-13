@@ -20,6 +20,7 @@ class Accommodation extends Model
         'status',
         'capacity',
         'price',
+        'price_highseason',
         'locationURL',
         'published_at',
     ];

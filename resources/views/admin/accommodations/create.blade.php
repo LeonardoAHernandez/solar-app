@@ -31,49 +31,59 @@
                 <div class="mb-4">
                     <x-label value="Slug de la propiedad" class="mb-1" 
                         for="slug" />
-                    <x-input placeholder="Slug" class="w-full" id="slug"
+                    <x-input placeholder="nombre-de-la-propiedad" class="w-full" id="slug"
                         name="slug" value="{{ old('slug') }}"/>
                 </div>
                 
                 <div class="mb-4">
                     <x-label value="Resumen de la propiedad" class="mb-1" 
                         for="summary" />
-                    <x-input placeholder="Resumen de la propiedad" class="w-full" 
+                    <x-input placeholder="Resumen..." class="w-full" 
                         name="summary" value="{{ old('summary') }}"/>
                 </div>
                 
                 <div class="mb-4">
                     <x-label value="Descripción de la propiedad" class="mb-1" 
                         for="description" />
-                    <x-input placeholder="Descripción de la propiedad" class="w-full" 
+                    <x-input placeholder="Descripción..." class="w-full" 
                         name="description" value="{{ old('description') }}"/>
                 </div>
                 
-                <div class="mb-4">
+                {{-- <div class="mb-4">
                     <x-label value="Estatus de la propiedad" class="mb-1" 
                         for="status" />
                     <x-input placeholder="Estatus" class="w-full" 
                         name="status" value="{{ old('status') }}"/>
-                </div>
+                </div> --}}
                 
                 <div class="mb-4">
                     <x-label value="Capacidad de la propiedad" class="mb-1" 
                         for="capacity" />
-                    <x-input placeholder="Capacidad" class="w-full" 
+                    <x-input placeholder="1, 2, 3, ..." class="w-full" 
                         name="capacity" value="{{ old('capacity') }}"/>
                 </div>
-                
-                <div class="mb-4">
-                    <x-label value="Precio por noche" class="mb-1" 
-                        for="price" />
-                    <x-input placeholder="Precio por noche" class="w-full" 
-                        name="price" value="{{ old('price') }}"/>
+
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <x-label value="Precio por noche" class="mb-1" 
+                            for="price" />
+                        <x-input placeholder="2000, 2500, ..." class="w-full" 
+                            name="price" value="{{ old('price') }}"/>
+                    </div>
+                    
+                    <div>
+                        <x-label value="Precio en temporada alta" class="mb-1" 
+                            for="price_highseason" />
+                        <x-input placeholder="2500, 3000, ..." class="w-full" 
+                            name="price_highseason" value="{{ old('price_highseason') }}"/>
+                    </div>
                 </div>
+                
                 
                 <div class="mb-4">
                     <x-label value="Ubicación (URL)" class="mb-1" 
                         for="locationURL" />
-                    <x-input placeholder="URL de la ubicacion" class="w-full" 
+                    <x-input placeholder="https://www.google.com/maps..." class="w-full" 
                         name="locationURL" value="{{ old('locationURL') }}"/>
                 </div>
 

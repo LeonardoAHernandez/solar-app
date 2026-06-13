@@ -1,9 +1,7 @@
 <x-admin-layout>
 
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Propiedad: {{ $accommodation->name }}
-        </h2>
+        <x-admin.header-edit-accommodation :accommodation="$accommodation" />
     </x-slot>
 
     <x-admin.accommodation-sidebar :accommodation="$accommodation">
@@ -47,27 +45,40 @@
                 </x-textarea>
             </div>
 
-            <div class="mb-4">
+            {{-- <div class="mb-4">
                 <x-label value="Estatus de la propiedad" class="mb-1" for="status" />
                 <x-input placeholder="Estatus" class="w-full" name="status"
                     value="{{ old('status', $accommodation->status) }}" />
-            </div>
+            </div> --}}
 
             <div class="mb-4">
                 <x-label value="Capacidad de la propiedad" class="mb-1" for="capacity" />
-                <x-input placeholder="Capacidad" class="w-full" name="capacity"
+                <x-input placeholder="1, 2, 3, ..." class="w-full" name="capacity"
                     value="{{ old('capacity', $accommodation->capacity) }}" />
             </div>
 
-            <div class="mb-4">
+            {{-- <div class="mb-4">
                 <x-label value="Precio por noche" class="mb-1" for="price" />
-                <x-input placeholder="Precio por noche" class="w-full" name="price"
+                <x-input placeholder="2000, 2500, ..." class="w-full" name="price"
                     value="{{ old('price', $accommodation->price) }}" />
+            </div> --}}
+
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                    <x-label value="Precio por noche" class="mb-1" for="price" />
+                    <x-input placeholder="2000, 2500, ..." class="w-full" name="price" value="{{ old('price', $accommodation->price) }}" />
+                </div>
+
+                <div>
+                    <x-label value="Precio en temporada alta" class="mb-1" for="price_highseason" />
+                    <x-input placeholder="2500, 3000, ..." class="w-full" name="price_highseason"
+                        value="{{ old('price_highseason', $accommodation->price_highseason) }}" />
+                </div>
             </div>
 
             <div class="mb-4">
                 <x-label value="Ubicación (URL)" class="mb-1" for="locationURL" />
-                <x-input placeholder="URL de la ubicacion" class="w-full" name="locationURL"
+                <x-input placeholder="https://www.google.com/maps..." class="w-full" name="locationURL"
                     value="{{ old('locationURL', $accommodation->locationURL) }}" />
             </div>
 
@@ -76,45 +87,6 @@
                     Guardar cambios
                 </x-button>
             </div>
-
-            {{-- <div>
-                <p class="text-2xl font-semibold mb-2">
-                    Imagen de la propiedad
-                </p>
-
-                <div class="grid md:grid-cols-2 gap-4">
-
-                    <figure>
-                        <img src="{{ $accommodation->image }}" alt="{{ $accommodation->name }}" id="imgPreview"
-                            class="w-full aspect-video object-cover object-center">
-                    </figure>
-
-                    <div>
-                        <p class="mb-2">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ullam
-                            similique est tempora repellendus natus maxime quam placeat eius dolore enim
-                            odio suscipit.</p>
-
-                        <label>
-
-                            <span class="btn btn-blue md:hidden cursor-pointer">
-                                Selecciona una imagen
-                            </span>
-
-                            <input class="hidden md:block" type="file" accept="image/*" name="image"
-                                onchange="preview_image(event, '#imgPreview')">
-                        </label>
-
-                        <div class="flex md:justify-end mt-4">
-                            <x-button>
-                                Guardar cambios
-                            </x-button>
-                        </div>
-                    </div>
-
-                </div>
-
-            </div> --}}
-
 
         </form>
 

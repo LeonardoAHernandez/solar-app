@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\AccommodationStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Accommodation;
 use App\Models\Detail;
@@ -9,6 +10,7 @@ use App\Models\Service;
 use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class AccommodationController extends Controller
 {
@@ -80,13 +82,15 @@ class AccommodationController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'slug' => 'required|string|max:255|unique:accommodations',
-            'summary' => 'required|string',
+            'summary' => 'string',
             'description' => 'required|string',
-            'status' => 'required|integer',
             'capacity' => 'required|integer',
             'price' => 'required|numeric',
+            'price_highseason' => 'required|numeric',
             'locationURL' => 'required',
         ]);
+
+        $data['status'] = AccommodationStatus::BORRADOR->value;
 
         $accommodation = Accommodation::create($data);
 
@@ -123,9 +127,9 @@ class AccommodationController extends Controller
             'slug' => 'required|string|max:255|unique:accommodations,slug,' . $accommodation->id,
             'summary' => 'required|string',
             'description' => 'required|string',
-            'status' => 'required|integer',
             'capacity' => 'required|integer',
             'price' => 'required|numeric',
+            'price_highseason' => 'required|numeric',
             'locationURL' => 'required',
         ]);
 
@@ -156,5 +160,18 @@ class AccommodationController extends Controller
     public function images(Accommodation $accommodation)
     {
         return view('admin.accommodations.images', compact('accommodation'));
+    }
+
+    public function updateStatus(Request $request, Accommodation $accommodation)
+    {
+        $request->validate([
+            'status' => ['required', Rule::enum(AccommodationStatus::class)],
+        ]);
+
+        $accommodation->update([
+            'status' => $request->status,
+        ]);
+
+        return back()->with('flash.banner', 'El estatus de la propiedad ha sido actualizado.');
     }
 }
