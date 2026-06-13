@@ -82,6 +82,7 @@ class AccommodationController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'slug' => 'required|string|max:255|unique:accommodations',
+            'category' => 'required|string|max:255',
             'summary' => 'string',
             'description' => 'required|string',
             'capacity' => 'required|integer',
@@ -125,6 +126,7 @@ class AccommodationController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'slug' => 'required|string|max:255|unique:accommodations,slug,' . $accommodation->id,
+            'category' => 'required|string|max:255',
             'summary' => 'required|string',
             'description' => 'required|string',
             'capacity' => 'required|integer',

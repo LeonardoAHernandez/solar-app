@@ -1,3 +1,7 @@
+@php
+    $optionsCategory = ['Para vacacionar', 'Para desconectarse', 'Vida urbana', 'CoWorking'];
+@endphp
+
 <x-admin-layout>
 
     <x-slot name="header">
@@ -30,6 +34,17 @@
                     <x-input name="slug" class="w-full" value="{{ old('slug', $accommodation->slug) }}" />
                 </div>
             @endempty
+
+            <div class="mb-4">
+                <x-label value="Categoría de la propiedad" class="mb-1" for="category" />
+                <x-select name="category" class="w-full">
+                    @foreach ($optionsCategory as $category)
+                        <option value="{{ $category }}" @selected(old('category', $accommodation->category) == $category)>
+                            {{ $category }}
+                        </option>
+                    @endforeach
+                </x-select>
+            </div>
 
             <div class="mb-4">
                 <x-label for="summary" class="mb-1" value="Resumen de la propiedad" />
@@ -66,7 +81,8 @@
             <div class="grid grid-cols-2 gap-4 mb-4">
                 <div>
                     <x-label value="Precio por noche" class="mb-1" for="price" />
-                    <x-input placeholder="2000, 2500, ..." class="w-full" name="price" value="{{ old('price', $accommodation->price) }}" />
+                    <x-input placeholder="2000, 2500, ..." class="w-full" name="price"
+                        value="{{ old('price', $accommodation->price) }}" />
                 </div>
 
                 <div>

@@ -15,6 +15,7 @@ class Accommodation extends Model
     protected $fillable = [
         'name',
         'slug',
+        'category',
         'summary',
         'description',
         'status',
