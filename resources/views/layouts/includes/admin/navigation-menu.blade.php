@@ -5,6 +5,11 @@
             'route' => route('admin.accommodations.index'),
             'active' => request()->routeIs('admin.accommodations.index'),
         ],
+        [
+            'name' => 'Temporadas',
+            'route' => route('admin.seasons.index'),
+            'active' => request()->routeIs('admin.seasons.*'),
+        ],
     ];
 @endphp
 

@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AccommodationController;
 use App\Http\Controllers\Admin\DetailController;
 use App\Http\Controllers\Admin\ImageController;
+use App\Http\Controllers\Admin\SeasonController;
 use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\TagController;
 use Illuminate\Support\Facades\Route;
@@ -51,3 +52,8 @@ Route::post('details/manage', [DetailController::class, 'createOrUpdateDetail'])
 // Ruta para manejar el cambio de estado del alojamiento (borrador/activo/inactivo)
 Route::patch('accommodations/{accommodation}/status', [AccommodationController::class, 'updateStatus'])
     ->name('accommodations.status');
+
+
+
+// Rutas de temporadas (temporadas altas/bajas)
+Route::resource('seasons', SeasonController::class);
