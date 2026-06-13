@@ -48,6 +48,25 @@ class Accommodation extends Model
         );
     }
 
+    /**
+     * Obtiene el precio dinámico dependiendo de la temporada actual.
+     */
+    protected function price(): Attribute
+    {
+        return Attribute::make(
+            get: function (mixed $value) {
+                // Evaluamos la configuración global que definimos en el ServiceProvider
+                if (config('app.is_high_season', false)) {
+                    // Si es temporada alta, retornamos el precio especial (o el normal si el especial está vacío)
+                    return $this->price_highseason ?? $value;
+                }
+
+                // Si es temporada baja, retornamos el valor original de la columna 'price'
+                return $value;
+            }
+        );
+    }
+
 
     // Relaciones
     public function images()
