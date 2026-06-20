@@ -2,6 +2,8 @@ import defaultTheme from 'tailwindcss/defaultTheme';
 import forms from '@tailwindcss/forms';
 import typography from '@tailwindcss/typography';
 
+
+
 /** @type {import('tailwindcss').Config} */
 export default {
     content: [
@@ -15,6 +17,9 @@ export default {
         extend: {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                'tenor': ['"Tenor Sans"', 'sans-serif'],
+                'raleway': ['"Raleway"', 'sans-serif'],
+                'basker': [ '"Baskervville"', 'sans-serif'],
             },
             colors: {
                 'solar-gray': '#E0D6C3',

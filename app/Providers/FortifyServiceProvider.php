@@ -13,6 +13,8 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravel\Fortify\Actions\RedirectIfTwoFactorAuthenticatable;
 use Laravel\Fortify\Fortify;
+use Laravel\Fortify\Contracts\LoginResponse as LoginResponseContract; // <-- Agregado
+use Illuminate\Support\Facades\Auth; // <-- Agregado
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -51,6 +53,25 @@ class FortifyServiceProvider extends ServiceProvider
             return Limit::perMinute(10)->by(
                 ($credentialId ?: $request->session()->getId()).'|'.$request->ip()
             );
+        });
+
+        // Intercepta la respuesta de inicio de sesión exitoso de Fortify
+        $this->app->singleton(LoginResponseContract::class, function () {
+            return new class implements LoginResponseContract {
+                public function toResponse($request)
+                {
+                    /** @var \App\Models\User $user */
+                    $user = Auth::user();
+
+                    // Si es administrador, redirige al panel de administración
+                    if ($user && $user->isAdmin()) {
+                        return redirect()->route('admin.accommodations.index');
+                    }
+
+                    // Si es usuario normal/visitante, redirige al catálogo
+                    return redirect()->route('visitor.accommodations.index');
+                }
+            };
         });
     }
 }

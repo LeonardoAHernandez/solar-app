@@ -13,7 +13,11 @@ class AccommodationController extends Controller
      */
     public function index()
     {
-        return view('visitor.accommodations.index');
+        $groupedAccommodations = Accommodation::where('status', 2)
+        ->get()
+        ->groupBy('category');
+
+        return view('visitor.accommodations.index', compact('groupedAccommodations'));
     }
 
     /**

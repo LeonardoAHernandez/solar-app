@@ -5,6 +5,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth; // <-- Importante: Añadir esta línea para usar Auth
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -29,6 +30,18 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => CheckAdminRole::class,
         ]);
+
+        // Redirección para usuarios ya autenticados que entran a la raíz o rutas 'guest'
+        $middleware->redirectUsersTo(function () {
+            /** @var \App\Models\User $user */
+            $user = Auth::user();
+
+            if ($user && $user->isAdmin()) {
+                return route('admin.accommodations.index');
+            }
+
+            return route('visitor.accommodations.index');
+        });
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
