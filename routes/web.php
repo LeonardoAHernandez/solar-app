@@ -14,5 +14,5 @@ Route::get('/', function () {
         }
     }
 
-    return view('welcome');
+    return redirect()->route('visitor.accommodations.index');
 })->name('public.home');

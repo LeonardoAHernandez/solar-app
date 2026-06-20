@@ -16,6 +16,13 @@ export default {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
+            colors: {
+                'solar-gray': '#E0D6C3',
+                'solar-blue': '#0D3A43',
+                'solar-brown': '#67412A',
+                'solar-orange': '#E36415',
+                'solar-yellow': '#F9A826',
+            }
         },
     },
 
