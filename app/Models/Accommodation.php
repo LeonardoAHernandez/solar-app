@@ -44,7 +44,7 @@ class Accommodation extends Model
                 // 3. Retornamos la URL correspondiente o la imagen por defecto
                 return $fallbackImage
                     ? Storage::url($fallbackImage->image_path)
-                    : 'https://image.pngaaa.com/13/1887013-middle.png';
+                    : '/page-resources/img/NoImage.webp';
             }
         );
     }

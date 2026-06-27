@@ -39,9 +39,15 @@ class AccommodationController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Accommodation $accommodation)
+    public function show($id)
     {
-        //
+        // Buscamos el registro de forma manual por ID o por Slug
+        $accommodation = \App\Models\Accommodation::where('id', $id)
+            ->orWhere('slug', $id)
+            ->with(['images', 'services', 'details', 'tags'])
+            ->firstOrFail(); // Lanza un error 404 si no existe, ideal para producción
+
+        return view('visitor.accommodations.show', compact('accommodation'));
     }
 
     /**
