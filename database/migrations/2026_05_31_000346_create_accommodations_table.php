@@ -19,15 +19,16 @@ return new class extends Migration
 
             $table->string('category');
 
-            $table->text('summary')->nullable();
             $table->text('description')->nullable();
 
             $table->integer('status')->default(1);
 
-            $table->integer('capacity');
+            $table->integer('capacityMin');
+            $table->integer('capacityMax')->nullable();
 
-            $table->float('price');
-            $table->float('price_highseason');
+            $table->float('price_lowSeason', 10, 2);
+            $table->float('price_midSeason', 10, 2);
+            $table->float('price_highSeason', 10, 2);
             $table->text('locationURL');
 
             $table->timestamp('published_at')->nullable();

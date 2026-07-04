@@ -13,6 +13,7 @@ class Season extends Model
         'name',
         'start_date',
         'end_date',
+        'type',
     ];
 
     protected $casts = [

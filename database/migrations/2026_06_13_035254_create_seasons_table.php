@@ -17,7 +17,8 @@ return new class extends Migration
             $table->string('name'); // Ejemplo: "Verano 2026", "Navidad"
             $table->date('start_date'); // Fecha de inicio
             $table->date('end_date');   // Fecha de fin
-
+            $table->string('type', 10); // Agregado: 'mid' o 'high'
+            
             $table->timestamps();
         });
     }

@@ -16,12 +16,13 @@ class Accommodation extends Model
         'name',
         'slug',
         'category',
-        'summary',
         'description',
         'status',
-        'capacity',
-        'price',
-        'price_highseason',
+        'capacityMin',
+        'capacityMax',
+        'price_lowSeason',
+        'price_midSeason',
+        'price_highSeason',
         'locationURL',
         'published_at',
     ];
@@ -55,15 +56,19 @@ class Accommodation extends Model
     protected function price(): Attribute
     {
         return Attribute::make(
-            get: function (mixed $value) {
-                // Evaluamos la configuración global que definimos en el ServiceProvider
-                if (config('app.is_high_season', false)) {
-                    // Si es temporada alta, retornamos el precio especial (o el normal si el especial está vacío)
-                    return $this->price_highseason ?? $value;
+            get: function () {
+                // 1. Si el sistema está configurado en Temporada Alta
+                if (config('app.season') === 'high') {
+                    return $this->price_highSeason;
                 }
 
-                // Si es temporada baja, retornamos el valor original de la columna 'price'
-                return $value;
+                // 2. Si el sistema está configurado en Temporada Media
+                if (config('app.season') === 'mid') {
+                    return $this->price_midSeason;
+                }
+
+                // 3. Por defecto (o si es Temporada Baja), retornamos el precio base
+                return $this->price_lowSeason;
             }
         );
     }

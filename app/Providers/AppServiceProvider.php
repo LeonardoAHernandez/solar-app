@@ -22,20 +22,23 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $isHighSeason = false;
+        $currentSeasonType = 'low'; // Baja por defecto
 
-        // 2. Control preventivo por si estás corriendo migraciones desde cero
+        // Verificamos si la tabla existe para evitar fallos en comandos de consola (como migraciones iniciales)
         if (Schema::hasTable('seasons')) {
-            $today = now()->toDateString(); // Obtiene la fecha de hoy (YYYY-MM-DD)
+            $today = now()->toDateString();
 
-            // Buscamos si la fecha de hoy se encuentra entre el inicio y fin de alguna temporada guardada
-            $isHighSeason = Season::where('start_date', '<=', $today)
+            // Buscamos si el día de hoy cae dentro de algún rango registrado
+            $activeSeason = Season::where('start_date', '<=', $today)
                 ->where('end_date', '>=', $today)
-                ->exists(); // Devuelve true si encuentra al menos una coincidencia
+                ->first();
+
+            if ($activeSeason) {
+                $currentSeasonType = $activeSeason->type; // 'mid' o 'high'
+            }
         }
 
-        // 3. Compartimos el resultado tal cual lo teníamos antes
-        View::share('isHighSeason', $isHighSeason);
-        config(['app.is_high_season' => $isHighSeason]);
+        // Compartimos la temporada actual de forma global en la configuración del runtime
+        config(['app.season' => $currentSeasonType]);
     }
 }

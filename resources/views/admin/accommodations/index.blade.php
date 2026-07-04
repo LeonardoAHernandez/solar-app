@@ -129,7 +129,11 @@
                                 <div class="lg:col-span-2 flex flex-col justify-between space-y-4">
                                     <div>
                                         <h3 class="text-xl font-bold text-gray-900 mb-2">{{ $accommodation->name }}</h3>
-                                        <p class="text-sm text-gray-500 line-clamp-3 leading-relaxed mb-4">{{ $accommodation->summary }}</p>
+                                        
+                                        <!-- Eliminado line-clamp de $accommodation->summary inexistente y se cambió a description -->
+                                        <p class="text-sm text-gray-500 line-clamp-2 leading-relaxed mb-4">
+                                            {{ $accommodation->description }}
+                                        </p>
 
                                         {{-- Etiquetas --}}
                                         @if($accommodation->tags->isNotEmpty())
@@ -143,10 +147,15 @@
                                         @endif
                                     </div>
 
-                                    {{-- Capacidad y Servicios --}}
+                                    {{-- Capacidad Inteligente y Servicios --}}
                                     <div class="flex flex-wrap items-center gap-2 pt-2 border-t border-gray-50">
                                         <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-600 bg-gray-50 border border-gray-100 px-3 py-1.5 rounded-lg">
-                                            👥 {{ $accommodation->capacity }} Huéspedes
+                                            👥 
+                                            @if($accommodation->capacityMin === $accommodation->capacityMax)
+                                                {{ $accommodation->capacityMin }} Huéspedes
+                                            @else
+                                                {{ $accommodation->capacityMin }} - {{ $accommodation->capacityMax }} Huéspedes
+                                            @endif
                                         </span>
                                         @if($accommodation->services->isNotEmpty())
                                             <span class="inline-flex items-center text-xs font-semibold text-blue-600 bg-blue-50/50 border border-blue-100/50 px-3 py-1.5 rounded-lg">
@@ -156,15 +165,17 @@
                                     </div>
                                 </div>
                                 
-                                {{-- Precio --}}
+                                {{-- Precio Dinámico Tarifario --}}
                                 <div class="flex flex-row lg:flex-col justify-between lg:justify-between items-center lg:items-end border-t lg:border-t-0 lg:border-l border-gray-100 pt-4 lg:pt-0 lg:pl-6 h-full">
                                     <div class="flex items-center gap-1.5 bg-amber-50 border border-amber-100 px-2.5 py-1 rounded-lg">
-                                        <i class="fa-solid fa-star text-amber-500 text-xs"></i>
-                                        <span class="text-xs font-bold text-amber-800">5.0</span>
+                                        <span class="text-xs font-bold text-amber-800">⭐ 5.0</span>
                                     </div>
                                     <div class="text-right">
-                                        <p class="text-[10px] text-gray-400 uppercase font-bold tracking-wider mb-0.5">Precio por noche</p>
+                                        <p class="text-[10px] text-gray-400 uppercase font-bold tracking-wider mb-0.5">
+                                            {{ config('app.is_high_season', false) ? 'Temporada Alta' : 'Tarifa Base' }}
+                                        </p>
                                         <p class="text-2xl font-black text-gray-900 tracking-tight">
+                                            <!-- Se cambió el llamado al accesor dinámico price que calcula las temporadas -->
                                             ${{ number_format($accommodation->price, 2) }} <span class="text-xs font-semibold text-gray-400">MXN</span>
                                         </p>
                                     </div>
@@ -190,7 +201,6 @@
             const btnToggle = document.getElementById('btn-toggle-filters');
             const advancedFilters = document.getElementById('advanced-filters');
 
-            // Si hay filtros activos en la URL al recargar, dejamos el panel visible automáticamente
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.has('services[]') || urlParams.has('tags[]')) {
                 advancedFilters.classList.remove('hidden');

@@ -10,7 +10,7 @@ class SeasonController extends Controller
 {
     public function index()
     {
-        $seasons = Season::orderBy('start_date', 'asc')->get();
+        $seasons = Season::latest()->get();
         return view('admin.seasons.index', compact('seasons'));
     }
 
@@ -25,12 +25,12 @@ class SeasonController extends Controller
             'name' => 'required|string|max:255',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
+            'type' => 'required|string|in:mid,high',
         ]);
 
         Season::create($data);
 
-        session()->flash('flash.banner', 'Temporada creada correctamente.');
-        return redirect()->route('admin.seasons.index');
+        return redirect()->route('admin.seasons.index')->with('flash.banner', 'Temporada guardada con éxito.');
     }
 
     public function edit(Season $season)
@@ -44,20 +44,17 @@ class SeasonController extends Controller
             'name' => 'required|string|max:255',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
+            'type' => 'required|string|in:mid,high',
         ]);
 
         $season->update($data);
 
-        session()->flash('flash.banner', 'Temporada actualizada correctamente.');
-        return redirect()->route('admin.seasons.index');
+        return redirect()->route('admin.seasons.index')->with('flash.banner', 'Temporada actualizada.');
     }
 
     public function destroy(Season $season)
     {
         $season->delete();
-
-        session()->flash('flash.banner', 'Temporada eliminada correctamente.');
-        session()->flash('flash.bannerStyle', 'danger');
-        return redirect()->route('admin.seasons.index');
+        return redirect()->route('admin.seasons.index')->with('flash.banner', 'Temporada eliminada.');
     }
 }
