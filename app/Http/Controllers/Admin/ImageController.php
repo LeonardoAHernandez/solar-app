@@ -52,14 +52,14 @@ class ImageController extends Controller
             foreach ($request->file('images') as $index => $file) {
                 $extension = $file->getClientOriginalExtension();
                 $fileName = 'accommodation_' . $accommodation->id . '_' . uniqid() . '.' . $extension;
-                
+
                 $file->storePubliclyAs($folderPath, $fileName, 'public');
 
                 // Si no tiene principal, la primera de la tanda será la principal. Las demás serán galería.
                 $type = (!$hasPrincipal && $index === 0) ? 'principal' : 'galeria';
-                
-                // La posición solo importa para las de galería, la principal puede ser 0
-                $position = $type === 'principal' ? 0 : ($currentImagesCount + $index);
+
+                // La posición solo importa para las de galería, la principal puede ser 1
+                $position = $type === 'principal' ? 1 : ($currentImagesCount + $index + 1);
 
                 $accommodation->images()->create([
                     'image_path'       => $folderPath . '/' . $fileName,
@@ -96,35 +96,41 @@ class ImageController extends Controller
     {
         $request->validate([
             'type'     => 'required|in:principal,galeria',
-            'position' => 'required|integer|min:0',
+            'position' => 'required|integer|min:1', // Cambiado min:0 a min:1
         ]);
 
         try {
             DB::beginTransaction();
 
-            // REGLA DE NEGOCIO: Si esta imagen pasa a ser "principal",
-            // quitamos la principal anterior de este alojamiento para que no haya duplicados.
             if ($request->type === 'principal') {
+                // Reordenamos las demás imágenes incrementando su posición
                 Image::where('accommodation_id', $image->accommodation_id)
-                    ->where('type', 'principal')
-                    ->update(['type' => 'galeria', 'position' => 1]); // La mandamos a la galería
+                    ->where('id', '!=', $image->id)
+                    ->orderBy('position')
+                    ->get()
+                    ->each(function ($img, $index) {
+                        $newPos = $index + 2; // Desplazamos a partir de la posición 2
+                        $img->update([
+                            'position' => $newPos,
+                            'type'     => $newPos <= 4 ? 'principal' : 'galeria'
+                        ]);
+                    });
 
-                // La nueva principal no necesita posición de orden de catálogo
+                // Establecemos esta imagen como la número 1
                 $image->update([
-                    'type' => 'principal',
-                    'position' => 0
+                    'position' => 1,
+                    'type'     => 'principal'
                 ]);
             } else {
-                // Si solo cambia posición en la galería
+                // Si solo cambia posición individual en la galería
                 $image->update([
-                    'type' => 'galeria',
+                    'type'     => $request->position <= 4 ? 'principal' : 'galeria',
                     'position' => $request->position
                 ]);
             }
 
             DB::commit();
-            return redirect()->back()->with('success', '¡Ajustes de la imagen actualizados!');
-
+            return redirect()->back()->with('success', '¡Imagen establecida como portada con éxito!');
         } catch (Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('error', 'Error al actualizar la imagen: ' . $e->getMessage());
@@ -161,6 +167,40 @@ class ImageController extends Controller
 
             // Redireccionamos reportando el error sin haber tocado el archivo físico
             return redirect()->back()->with('error', 'No se pudo eliminar la imagen: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Guarda el orden de todas las imágenes de un alojamiento de forma masiva.
+     */
+    public function updateOrder(Request $request)
+    {
+        $request->validate([
+            'positions'   => 'required|array',
+            // 'distinct' le dice a Laravel que ningún valor dentro del array puede repetirse
+            'positions.*' => 'required|integer|min:1|distinct',
+        ], [
+            // Personalizamos el mensaje de error en caso de que falle
+            'positions.*.distinct' => 'El orden no se pudo guardar porque hay posiciones numéricas repetidas.',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            foreach ($request->positions as $imageId => $position) {
+                $type = ($position <= 5) ? 'principal' : 'galeria';
+
+                Image::where('id', $imageId)->update([
+                    'position' => $position,
+                    'type'     => $type
+                ]);
+            }
+
+            DB::commit();
+            return redirect()->back()->with('success', '¡El orden y los tipos de imágenes se han actualizado con éxito!');
+        } catch (Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Error al guardar el orden: ' . $e->getMessage());
         }
     }
 }

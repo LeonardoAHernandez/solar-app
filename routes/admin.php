@@ -19,8 +19,10 @@ Route::get('accommodations/{accommodation}/images', [ImageController::class, 'in
     ->name('accommodations.images');
 
 // Rutas de imágenes
+// Ruta masiva para guardar el orden
+Route::put('images/update-order', [ImageController::class, 'updateOrder'])
+    ->name('images.updateOrder');
 Route::resource('images', ImageController::class);
-
 
 // Rutas para la gestión de Etiquetas del Alojamiento
 Route::get('accommodations/{accommodation}/tags', [TagController::class, 'index'])
