@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
             TagSeeder::class,
             DetailSeeder::class,
             ServiceSeeder::class,
+            IconSeeder::class,
         ]);
     }
 }
