@@ -27,8 +27,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             TagSeeder::class,
             DetailSeeder::class,
-            ServiceSeeder::class,
             IconSeeder::class,
+            ServiceSeeder::class,
         ]);
     }
 }

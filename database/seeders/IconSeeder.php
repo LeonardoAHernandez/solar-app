@@ -20,12 +20,20 @@ class IconSeeder extends Seeder
             ['name' => 'Calefacción', 'class_name' => 'fa-solid fa-fire'],
             ['name' => 'Agua caliente', 'class_name' => 'fa-solid fa-faucet-drip'],
             ['name' => 'Toallas / Baño', 'class_name' => 'fa-solid fa-shower'],
+            ['name' => 'Plancha', 'class_name' => 'fa-solid fa-shirt'],
             ['name' => 'Cocina', 'class_name' => 'fa-solid fa-kitchen-set'],
-            ['name' => 'Microondas / Horno', 'class_name' => 'fa-solid fa-mitten'],
+            ['name' => 'Microondas', 'class_name' => 'fa-solid fa-scroll'], 
+            ['name' => 'Refrigerador', 'class_name' => 'fa-solid fa-temperature-arrow-down'],
+            ['name' => 'Horno / Manopla', 'class_name' => 'fa-solid fa-mitten'],
+            ['name' => 'Lavadora', 'class_name' => 'fa-solid fa-soap'],
+            ['name' => 'Secadora', 'class_name' => 'fa-solid fa-wind'],
         ];
 
         foreach ($icons as $icon) {
-            Icon::firstOrCreate(['class_name' => $icon['class_name']], $icon);
+            Icon::firstOrCreate(
+                ['class_name' => $icon['class_name']],
+                ['name' => $icon['name']]
+            );
         }
     }
 }

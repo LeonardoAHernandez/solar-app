@@ -16,13 +16,16 @@ class ServiceController extends Controller
      */
     public function index(Accommodation $accommodation)
     {
-        // 1. Obtener todos los servicios de la base de datos
-        $services = Service::all();
+        // 1. Obtener todos los servicios de la base de datos precargando su icono
+        $services = Service::with('icon')->get();
 
         // 2. Obtener los IDs de los servicios que este alojamiento ya tiene asociados
         $selectedServiceIds = $accommodation->services()->pluck('services.id')->toArray();
 
-        return view('admin.accommodations.services', compact('accommodation', 'services', 'selectedServiceIds'));
+        // NUEVO: Obtener todos los iconos disponibles para el selector del catálogo
+        $icons = \App\Models\Icon::orderBy('name')->get();
+
+        return view('admin.accommodations.services', compact('accommodation', 'services', 'selectedServiceIds', 'icons'));
     }
 
     /**
@@ -91,24 +94,43 @@ class ServiceController extends Controller
     }
 
     /**
-     * NUEVO: Crea un servicio desde cero o actualiza el nombre de uno existente en el catálogo maestro.
+     * NUEVO: Crea un servicio desde cero o actualiza el nombre/icono de uno existente en el catálogo maestro.
      */
     public function createOrUpdateService(Request $request)
     {
         $request->validate([
-            'service_id' => 'nullable|exists:services,id', // Si viene, edita; si no, crea
-            'name'       => 'required|string|max:255|unique:services,name,' . $request->service_id,
+            'service_id'      => 'nullable|exists:services,id',
+            'name'            => 'required|string|max:255|unique:services,name,' . $request->service_id,
+            'icon_id'         => 'nullable|string', // Puede ser ID numérico o el texto "new"
+            'new_icon_name'   => 'required_if:icon_id,new|nullable|string|max:255',
+            'new_icon_class'  => 'required_if:icon_id,new|nullable|string|max:255',
         ], [
             'name.unique' => 'Ese servicio ya existe en el catálogo.',
+            'new_icon_name.required_if' => 'El nombre del nuevo icono es obligatorio.',
+            'new_icon_class.required_if' => 'La clase de Font Awesome es obligatoria.',
         ]);
 
         try {
             DB::beginTransaction();
 
+            $iconId = $request->icon_id;
+
+            // Si el usuario seleccionó "Agregar nuevo icono"
+            if ($request->icon_id === 'new') {
+                $newIcon = \App\Models\Icon::create([
+                    'name' => $request->new_icon_name,
+                    'class_name' => $request->new_icon_class,
+                ]);
+                $iconId = $newIcon->id;
+            }
+
             // Busca por ID para actualizar, o crea uno nuevo si el ID está vacío
             Service::updateOrCreate(
                 ['id' => $request->service_id],
-                ['name' => $request->name]
+                [
+                    'name' => $request->name,
+                    'icon_id' => $iconId ?: null // Si está vacío se guarda como NULL
+                ]
             );
 
             DB::commit();
@@ -120,4 +142,5 @@ class ServiceController extends Controller
             return redirect()->back()->with('error', 'Error al gestionar el catálogo: ' . $e->getMessage());
         }
     }
+
 }
