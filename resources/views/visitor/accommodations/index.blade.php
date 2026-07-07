@@ -1,6 +1,10 @@
 <x-visitor-layout>
 
-    <div class="w-full [mask-image:linear-gradient(to_bottom,black_85%,transparent_100%)]"
+    <div class="mt-12 text-center">
+        <h1 class="text-3xl font-basker">En desarrollo... :D</h1>
+    </div>
+
+    {{-- <div class="w-full [mask-image:linear-gradient(to_bottom,black_85%,transparent_100%)]"
         style="background-image: url('{{ asset('page-resources/img/peFondoInicio.webp') }}')">
         <img src="page-resources/img/LogoSOLAR.webp" class="pt-12 p-24">
     </div>
@@ -38,7 +42,6 @@
                                     </div>
                                 </div>
 
-                                {{-- Precio --}}
                                 <div
                                     class="flex flex-row lg:flex-col justify-between lg:justify-between items-center lg:items-end pt-2 lg:pt-0 lg:pl-6 h-full">
                                     <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg">
@@ -69,6 +72,6 @@
                 &lt; Ver más &gt;
             </a>
         </div>
-    @endforeach
+    @endforeach --}}
 
 </x-visitor-layout>
