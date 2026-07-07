@@ -107,29 +107,11 @@
 
             <div class="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-4 gap-y-5 gap-x-12 max-w-7xl mx-auto px-4 md:px-8">
                 @foreach ($accommodation->services as $service)
-                    @php
-                        $serviceNameLower = strtolower($service->name);
-                    @endphp
                     <div class="flex items-center gap-4 text-gray-800 font-raleway text-base md:text-lg italic group">
                         <div class="text-xl md:text-2xl text-gray-700 w-8 flex justify-center items-center flex-shrink-0">
-                            @if (str_contains($serviceNameLower, 'wifi'))
-                                <i class="fa-solid fa-wifi"></i>
-                            @elseif (str_contains($serviceNameLower, 'tv') || str_contains($serviceNameLower, 'cable'))
-                                <i class="fa-solid fa-desktop"></i>
-                            @elseif (str_contains($serviceNameLower, 'aire') || str_contains($serviceNameLower, 'acondicionado'))
-                                <i class="fa-solid fa-snowflake"></i>
-                            @elseif (str_contains($serviceNameLower, 'cocina'))
-                                <i class="fa-solid fa-kitchen-set"></i>
-                            @elseif (str_contains($serviceNameLower, 'lavadora'))
-                                <i class="fa-solid fa-circle-check text-base text-gray-400"></i>
-                            @elseif (str_contains($serviceNameLower, 'comedor'))
-                                <i class="fa-solid fa-circle-check text-base text-gray-400"></i>
-                            @elseif (str_contains($serviceNameLower, 'jardín') || str_contains($serviceNameLower, 'jardin'))
-                                <i class="fa-solid fa-circle-check text-base text-gray-400"></i>
-                            @elseif (str_contains($serviceNameLower, 'alberca') || str_contains($serviceNameLower, 'piscina'))
-                                <i class="fa-solid fa-person-swimming"></i>
-                            @elseif (str_contains($serviceNameLower, 'vista') || str_contains($serviceNameLower, 'mar'))
-                                <i class="fa-solid fa-umbrella-beach"></i>
+                            {{-- LOGICA OPTIMIZADA: Pintar el class_name de la BD, o un icono por defecto si está vacío --}}
+                            @if ($service->icon)
+                                <i class="{{ $service->icon->class_name }}"></i>
                             @else
                                 <i class="fa-solid fa-circle-check text-base text-gray-400"></i>
                             @endif
