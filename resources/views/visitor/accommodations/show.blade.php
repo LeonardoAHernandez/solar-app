@@ -1,4 +1,7 @@
 <x-visitor-layout>
+    <!-- Estilos de GLightbox -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css" />
+
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 lg:space-y-8">
 
         {{-- Título de la propiedad --}}
@@ -26,25 +29,28 @@
         <div class="flex flex-col md:flex-row gap-3 md:gap-4 w-full h-auto md:h-[450px] lg:h-[550px]">
             
             {{-- Imagen Principal Izquierda (Posición 1) --}}
-            <div class="w-full md:w-1/2 aspect-[4/3] md:aspect-auto md:h-full bg-gray-100 rounded-2xl md:rounded-3xl overflow-hidden shadow-xs group">
-                @if ($cover)
+            @if ($cover)
+                <!-- UNIFICADO: Cambiado a data-gallery="accommodation-gallery" -->
+                <a href="{{ Storage::url($cover->image_path) }}" class="glightbox w-full md:w-1/2 aspect-[4/3] md:aspect-auto md:h-full bg-gray-100 rounded-2xl md:rounded-3xl overflow-hidden shadow-xs group cursor-zoom-in" data-gallery="accommodation-gallery">
                     <img src="{{ Storage::url($cover->image_path) }}"
                         class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                         alt="{{ $accommodation->name }}">
-                @else
-                    <img src="/page-resources/img/NoImage.webp" class="w-full h-full object-cover opacity-40"
-                        alt="No Image">
-                @endif
-            </div>
+                </a>
+            @else
+                <div class="w-full md:w-1/2 aspect-[4/3] md:aspect-auto md:h-full bg-gray-100 rounded-2xl md:rounded-3xl overflow-hidden shadow-xs flex items-center justify-center">
+                    <img src="/page-resources/img/NoImage.webp" class="w-full h-full object-cover opacity-40" alt="No Image">
+                </div>
+            @endif
 
             {{-- Cuadrícula Derecha (Posiciones 2 a 5) --}}
             <div class="w-full md:w-1/2 aspect-[4/3] md:aspect-auto md:h-full grid grid-cols-2 grid-rows-2 gap-3 md:gap-4">
                 @foreach ($gridImages as $img)
-                    <div class="w-full h-full bg-gray-100 rounded-xl md:rounded-2xl overflow-hidden shadow-xs group">
+                    <!-- UNIFICADO: Cambiado a data-gallery="accommodation-gallery" -->
+                    <a href="{{ Storage::url($img->image_path) }}" class="glightbox w-full h-full bg-gray-100 rounded-xl md:rounded-2xl overflow-hidden shadow-xs group cursor-zoom-in" data-gallery="accommodation-gallery">
                         <img src="{{ Storage::url($img->image_path) }}"
                             class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                             alt="Galería {{ $accommodation->name }} - {{ $img->position }}">
-                    </div>
+                    </a>
                 @endforeach
 
                 {{-- Espacios vacíos de respaldo si no se llenan las 5 imágenes --}}
@@ -114,9 +120,7 @@
 
         </div>
 
-        {{-- ========================================== --}}
-        {{-- NUEVA SECCIÓN: ¿DÓNDE VOY A DESCANSAR? (Posición 6+) --}}
-        {{-- ========================================== --}}
+        {{-- SECCIÓN: ¿DÓNDE VOY A DESCANSAR? (Posición 6+) --}}
         @if($restImages->isNotEmpty())
         <div class="w-full space-y-6 pt-6">
             {{-- Barra naranja de título --}}
@@ -136,11 +140,12 @@
                 {{-- Contenedor deslizable de imágenes --}}
                 <div id="rest-slider" class="flex-1 flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-none pb-2">
                     @foreach($restImages as $img)
-                        <div class="w-full sm:w-[calc(50%-8px)] flex-shrink-0 snap-start aspect-[4/3] bg-gray-100 rounded-2xl overflow-hidden shadow-sm">
+                        <!-- UNIFICADO: Cambiado a data-gallery="accommodation-gallery" -->
+                        <a href="{{ Storage::url($img->image_path) }}" class="glightbox w-full sm:w-[calc(50%-8px)] flex-shrink-0 snap-start aspect-[4/3] bg-gray-100 rounded-2xl overflow-hidden shadow-sm cursor-zoom-in group" data-gallery="accommodation-gallery">
                             <img src="{{ Storage::url($img->image_path) }}" 
-                                 class="w-full h-full object-cover object-center" 
+                                 class="w-full h-full object-cover object-center group-hover:scale-102 transition-transform duration-300" 
                                  alt="Descanso {{ $accommodation->name }}">
-                        </div>
+                        </a>
                     @endforeach
                 </div>
 
@@ -179,4 +184,19 @@
         </div>
 
     </div>
+
+    <!-- Script de GLightbox -->
+    <script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Inicializamos la ventana flotante unificada
+            const lightbox = GLightbox({
+                selector: '.glightbox',
+                touchNavigation: true, 
+                loop: true,            
+                zoomable: true,        
+                draggable: true        
+            });
+        });
+    </script>
 </x-visitor-layout>
