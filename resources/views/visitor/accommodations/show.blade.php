@@ -27,26 +27,33 @@
 
         {{-- CONTENEDOR DE GALERÍA INFALIBLE (Posiciones 1 al 5) --}}
         <div class="flex flex-col md:flex-row gap-3 md:gap-4 w-full h-auto md:h-[450px] lg:h-[550px]">
-            
+
             {{-- Imagen Principal Izquierda (Posición 1) --}}
             @if ($cover)
                 <!-- UNIFICADO: Cambiado a data-gallery="accommodation-gallery" -->
-                <a href="{{ Storage::url($cover->image_path) }}" class="glightbox w-full md:w-1/2 aspect-[4/3] md:aspect-auto md:h-full bg-gray-100 rounded-2xl md:rounded-3xl overflow-hidden shadow-xs group cursor-zoom-in" data-gallery="accommodation-gallery">
+                <a href="{{ Storage::url($cover->image_path) }}"
+                    class="glightbox w-full md:w-1/2 aspect-[4/3] md:aspect-auto md:h-full bg-gray-100 rounded-2xl md:rounded-3xl overflow-hidden shadow-xs group cursor-zoom-in"
+                    data-gallery="accommodation-gallery">
                     <img src="{{ Storage::url($cover->image_path) }}"
                         class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                         alt="{{ $accommodation->name }}">
                 </a>
             @else
-                <div class="w-full md:w-1/2 aspect-[4/3] md:aspect-auto md:h-full bg-gray-100 rounded-2xl md:rounded-3xl overflow-hidden shadow-xs flex items-center justify-center">
-                    <img src="/page-resources/img/NoImage.webp" class="w-full h-full object-cover opacity-40" alt="No Image">
+                <div
+                    class="w-full md:w-1/2 aspect-[4/3] md:aspect-auto md:h-full bg-gray-100 rounded-2xl md:rounded-3xl overflow-hidden shadow-xs flex items-center justify-center">
+                    <img src="/page-resources/img/NoImage.webp" class="w-full h-full object-cover opacity-40"
+                        alt="No Image">
                 </div>
             @endif
 
             {{-- Cuadrícula Derecha (Posiciones 2 a 5) --}}
-            <div class="w-full md:w-1/2 aspect-[4/3] md:aspect-auto md:h-full grid grid-cols-2 grid-rows-2 gap-3 md:gap-4">
+            <div
+                class="w-full md:w-1/2 aspect-[4/3] md:aspect-auto md:h-full grid grid-cols-2 grid-rows-2 gap-3 md:gap-4">
                 @foreach ($gridImages as $img)
                     <!-- UNIFICADO: Cambiado a data-gallery="accommodation-gallery" -->
-                    <a href="{{ Storage::url($img->image_path) }}" class="glightbox w-full h-full bg-gray-100 rounded-xl md:rounded-2xl overflow-hidden shadow-xs group cursor-zoom-in" data-gallery="accommodation-gallery">
+                    <a href="{{ Storage::url($img->image_path) }}"
+                        class="glightbox w-full h-full bg-gray-100 rounded-xl md:rounded-2xl overflow-hidden shadow-xs group cursor-zoom-in"
+                        data-gallery="accommodation-gallery">
                         <img src="{{ Storage::url($img->image_path) }}"
                             class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                             alt="Galería {{ $accommodation->name }} - {{ $img->position }}">
@@ -55,7 +62,8 @@
 
                 {{-- Espacios vacíos de respaldo si no se llenan las 5 imágenes --}}
                 @for ($i = $gridImages->count(); $i < 4; $i++)
-                    <div class="w-full h-full bg-amber-50/30 rounded-xl md:rounded-2xl border border-dashed border-amber-200/60 flex items-center justify-center text-gray-400 font-raleway text-xs p-2 text-center">
+                    <div
+                        class="w-full h-full bg-amber-50/30 rounded-xl md:rounded-2xl border border-dashed border-amber-200/60 flex items-center justify-center text-gray-400 font-raleway text-xs p-2 text-center">
                         Próximamente
                     </div>
                 @endfor
@@ -70,8 +78,9 @@
                 $subtitulo = $accommodation->tags->where('category', 'Tipo de alojamiento')->first();
                 $zona = $accommodation->tags->where('category', 'Zona')->first();
             @endphp
-            
-            <p class="text-sm md:text-base lg:text-lg text-gray-500 font-raleway flex flex-wrap items-center gap-x-2 gap-y-1">
+
+            <p
+                class="text-sm md:text-base lg:text-lg text-gray-500 font-raleway flex flex-wrap items-center gap-x-2 gap-y-1">
                 @if ($subtitulo)
                     <span class="font-bold">{{ $subtitulo->name }}</span>
                 @endif
@@ -86,22 +95,23 @@
             </p>
 
             <div class="border-b border-gray-100 pb-4">
-                <div class="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-sm md:text-base lg:text-lg text-gray-600 font-raleway justify-start">
+                <div
+                    class="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-sm md:text-base lg:text-lg text-gray-600 font-raleway justify-start">
                     <span>
-                        👥 Capacidad: 
-                        @if($accommodation->capacityMin === $accommodation->capacityMax)
+                        👥 Capacidad:
+                        @if ($accommodation->capacityMin === $accommodation->capacityMax)
                             {{ $accommodation->capacityMin }} Persona(s)
                         @else
                             {{ $accommodation->capacityMin }} - {{ $accommodation->capacityMax }} Personas
                         @endif
                     </span>
-                    @if($accommodation->details->count() > 0)
+                    @if ($accommodation->details->count() > 0)
                         <span class="text-gray-300">|</span>
                     @endif
                     @foreach ($accommodation->details as $detail)
                         <span>
-                            @if($detail->pivot->quantity > 1)
-                                {{ $detail->pivot->quantity }} 
+                            @if ($detail->pivot->quantity > 1)
+                                {{ $detail->pivot->quantity }}
                             @endif
                             {{ $detail->name }}
                         </span>
@@ -113,7 +123,8 @@
             </div>
 
             <div class="py-2">
-                <div class="text-gray-900 text-base md:text-lg font-basker leading-relaxed whitespace-pre-line text-justify">
+                <div
+                    class="text-gray-900 text-base md:text-lg font-basker leading-relaxed whitespace-pre-line text-justify">
                     {{ $accommodation->description }}
                 </div>
             </div>
@@ -121,43 +132,46 @@
         </div>
 
         {{-- SECCIÓN: ¿DÓNDE VOY A DESCANSAR? (Posición 6+) --}}
-        @if($restImages->isNotEmpty())
-        <div class="w-full space-y-6 pt-6">
-            {{-- Barra naranja de título --}}
-            <div class="w-full bg-[#e0691d] text-white text-center py-3 rounded-xl shadow-xs">
-                <h2 class="text-xl md:text-2xl font-raleway tracking-wide">¿Dónde voy a descansar?</h2>
-            </div>
-
-            {{-- Slider/Galería con flechas laterales --}}
-            <div class="flex items-center justify-between gap-2 md:gap-4 px-2">
-                
-                {{-- Botón Izquierdo --}}
-                <button onclick="document.getElementById('rest-slider').scrollBy({left: -300, behavior: 'smooth'})" 
-                        class="text-3xl md:text-5xl font-light text-[#0f2d3a] hover:opacity-70 transition select-none hidden sm:block">
-                    &lt;
-                </button>
-
-                {{-- Contenedor deslizable de imágenes --}}
-                <div id="rest-slider" class="flex-1 flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-none pb-2">
-                    @foreach($restImages as $img)
-                        <!-- UNIFICADO: Cambiado a data-gallery="accommodation-gallery" -->
-                        <a href="{{ Storage::url($img->image_path) }}" class="glightbox w-full sm:w-[calc(50%-8px)] flex-shrink-0 snap-start aspect-[4/3] bg-gray-100 rounded-2xl overflow-hidden shadow-sm cursor-zoom-in group" data-gallery="accommodation-gallery">
-                            <img src="{{ Storage::url($img->image_path) }}" 
-                                 class="w-full h-full object-cover object-center group-hover:scale-102 transition-transform duration-300" 
-                                 alt="Descanso {{ $accommodation->name }}">
-                        </a>
-                    @endforeach
+        @if ($restImages->isNotEmpty())
+            <div class="w-full space-y-6 pt-6">
+                {{-- Barra naranja de título --}}
+                <div class="w-full bg-[#e0691d] text-white text-center py-3 rounded-xl shadow-xs">
+                    <h2 class="text-xl md:text-2xl font-raleway tracking-wide">¿Dónde voy a descansar?</h2>
                 </div>
 
-                {{-- Botón Derecho --}}
-                <button onclick="document.getElementById('rest-slider').scrollBy({left: 300, behavior: 'smooth'})" 
+                {{-- Slider/Galería con flechas laterales --}}
+                <div class="flex items-center justify-between gap-2 md:gap-4 px-2">
+
+                    {{-- Botón Izquierdo --}}
+                    <button onclick="document.getElementById('rest-slider').scrollBy({left: -300, behavior: 'smooth'})"
                         class="text-3xl md:text-5xl font-light text-[#0f2d3a] hover:opacity-70 transition select-none hidden sm:block">
-                    &gt;
-                </button>
+                        &lt;
+                    </button>
+
+                    {{-- Contenedor deslizable de imágenes --}}
+                    <div id="rest-slider"
+                        class="flex-1 flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-none pb-2">
+                        @foreach ($restImages as $img)
+                            <!-- UNIFICADO: Cambiado a data-gallery="accommodation-gallery" -->
+                            <a href="{{ Storage::url($img->image_path) }}"
+                                class="glightbox w-full sm:w-[calc(50%-8px)] flex-shrink-0 snap-start aspect-[4/3] bg-gray-100 rounded-2xl overflow-hidden shadow-sm cursor-zoom-in group"
+                                data-gallery="accommodation-gallery">
+                                <img src="{{ Storage::url($img->image_path) }}"
+                                    class="w-full h-full object-cover object-center group-hover:scale-102 transition-transform duration-300"
+                                    alt="Descanso {{ $accommodation->name }}">
+                            </a>
+                        @endforeach
+                    </div>
+
+                    {{-- Botón Derecho --}}
+                    <button onclick="document.getElementById('rest-slider').scrollBy({left: 300, behavior: 'smooth'})"
+                        class="text-3xl md:text-5xl font-light text-[#0f2d3a] hover:opacity-70 transition select-none hidden sm:block">
+                        &gt;
+                    </button>
+                </div>
             </div>
-        </div>
         @endif
-        
+
         {{-- Sección de Servicios --}}
         <div class="border-t border-gray-100 pt-8 mt-6 space-y-8">
             <h3 class="text-2xl md:text-4xl text-solar-blue font-tenor tracking-wide text-center">
@@ -167,14 +181,15 @@
             <div class="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-4 gap-y-5 gap-x-12 max-w-7xl mx-auto px-4 md:px-8">
                 @foreach ($accommodation->services as $service)
                     <div class="flex items-center gap-4 text-gray-800 font-raleway text-base md:text-lg italic group">
-                        <div class="text-xl md:text-2xl text-gray-700 w-8 flex justify-center items-center flex-shrink-0">
+                        <div
+                            class="text-xl md:text-2xl text-gray-700 w-8 flex justify-center items-center flex-shrink-0">
                             @if ($service->icon)
                                 <i class="{{ $service->icon->class_name }}"></i>
                             @else
                                 <i class="fa-solid fa-circle-check text-base text-gray-400"></i>
                             @endif
                         </div>
-                        
+
                         <span class="tracking-wide text-left text-sm md:text-base lg:text-lg">
                             {{ $service->name }}
                         </span>
@@ -188,15 +203,88 @@
     <!-- Script de GLightbox -->
     <script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             // Inicializamos la ventana flotante unificada
             const lightbox = GLightbox({
                 selector: '.glightbox',
-                touchNavigation: true, 
-                loop: true,            
-                zoomable: true,        
-                draggable: true        
+                touchNavigation: true,
+                loop: true,
+                zoomable: true,
+                draggable: true
             });
         });
     </script>
+
+    {{-- BARRA / BOTÓN FLOTANTE "ME INTERESA" --}}
+    <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-4 shadow-xl md:shadow-none md:border-none md:relative md:p-0 md:mt-6 z-40 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 bg-amber-50 border border-amber-100 p-4 rounded-2xl">
+            <div class="hidden sm:block">
+                <p class="text-xs uppercase font-bold text-gray-400 tracking-wider">¿Te gustaría agendar o cotizar?</p>
+                <p class="text-sm font-semibold text-solar-brown">Guarda esta propiedad en tu lista de interés para enviarla por WhatsApp.</p>
+            </div>
+            <button onclick="addToInterestList({{ $accommodation->id }}, '{{ addslashes($accommodation->name) }}', '{{ $accommodation->image }}', {{ $accommodation->price }})" 
+                    class="w-full sm:w-auto bg-[#e0691d] hover:bg-[#c95916] text-white font-bold px-8 py-3.5 rounded-xl transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 text-sm md:text-base">
+                ❤️ Me interesa esta propiedad
+            </button>
+        </div>
+    </div>
+
+    {{-- ALERTA FLOTANTE PERSONALIZADA (TOAST) --}}
+    <div id="custom-toast" class="fixed top-5 right-5 z-50 transform translate-y-[-20px] opacity-0 pointer-events-none transition-all duration-300 ease-out max-w-sm w-full bg-white border border-gray-100 shadow-2xl rounded-2xl p-4 flex items-center gap-3">
+        <div id="toast-icon-bg" class="w-10 h-10 rounded-xl flex items-center justify-center text-lg flex-shrink-0">
+            <!-- Icono dinámico -->
+        </div>
+        <div class="flex-grow">
+            <p id="toast-message" class="text-sm font-semibold text-gray-900 font-raleway"></p>
+        </div>
+        <button onclick="hideToast()" class="text-gray-400 hover:text-gray-600 text-xs p-1">✕</button>
+    </div>
+
+    {{-- Script para gestionar el guardado local y el Toast --}}
+    <script>
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('custom-toast');
+            const toastMsg = document.getElementById('toast-message');
+            const iconBg = document.getElementById('toast-icon-bg');
+            
+            toastMsg.innerText = message;
+            
+            // Personalizar colores según el tipo
+            if(type === 'success') {
+                iconBg.className = "w-10 h-10 rounded-xl flex items-center justify-center text-lg flex-shrink-0 bg-green-50 text-green-600";
+                iconBg.innerHTML = "✓";
+            } else {
+                iconBg.className = "w-10 h-10 rounded-xl flex items-center justify-center text-lg flex-shrink-0 bg-amber-50 text-amber-600";
+                iconBg.innerHTML = "ℹ";
+            }
+            
+            // Mostrar con transiciones
+            toast.classList.remove('translate-y-[-20px]', 'opacity-0', 'pointer-events-none');
+            
+            // Ocultar automáticamente en 3 segundos
+            setTimeout(hideToast, 3000);
+        }
+
+        function hideToast() {
+            const toast = document.getElementById('custom-toast');
+            toast.classList.add('translate-y-[-20px]', 'opacity-0', 'pointer-events-none');
+        }
+
+        function addToInterestList(id, name, image, price) {
+            let list = JSON.parse(localStorage.getItem('solar_interest_list')) || [];
+            const exists = list.some(item => item.id === id);
+            
+            if (!exists) {
+                list.push({ id, name, image, price });
+                localStorage.setItem('solar_interest_list', JSON.stringify(list));
+                
+                // Lanzar la nueva alerta flotante
+                showToast(`"${name}" se agregó a tu lista de interés.`, 'success');
+            } else {
+                // Lanzar alerta de ya agregado
+                showToast("Esta propiedad ya está en tu lista.", 'info');
+            }
+        }
+    </script>
+
 </x-visitor-layout>

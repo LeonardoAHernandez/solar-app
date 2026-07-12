@@ -7,6 +7,13 @@
             'iconRoute' => 'page-resources/img/peHome.webp',
             'active' => request()->routeIs('visitor.accommodations.index'),
         ],
+        [
+            'name' => 'Intereses',
+            'icon' => 'fa-solid fa-heart',
+            'route' => route('visitor.accommodations.interests'),
+            'iconRoute' => 'page-resources/img/peHome.webp',
+            'active' => request()->routeIs('visitor.interests.index'),
+        ],
     ];
 @endphp
 
