@@ -13,7 +13,6 @@
             
             {{-- LISTADO DE PROPIEDADES (IZQUIERDA) --}}
             <div id="interests-container" class="lg:col-span-2 space-y-4">
-                <!-- Se llena dinámicamente con JS -->
                 <div class="text-center py-12 bg-white rounded-2xl border border-dashed border-gray-200">
                     <p class="text-gray-400 text-sm">Cargando tus propiedades seleccionadas...</p>
                 </div>
@@ -27,11 +26,6 @@
                     <span>Propiedades seleccionadas:</span>
                     <span id="items-count">0</span>
                 </div>
-
-                {{-- <div class="flex justify-between text-lg font-black text-gray-950 pt-2 border-t border-gray-50">
-                    <span>Estimado por noche:</span>
-                    <span id="total-price">$0.00 MXN</span>
-                </div> --}}
 
                 {{-- BOTÓN DINÁMICO DE WHATSAPP --}}
                 <a id="whatsapp-btn" href="#" target="_blank" 
@@ -70,18 +64,15 @@
             summaryCard.classList.remove('hidden');
 
             let html = '';
-            let total = 0;
             let whatsappPropertiesText = [];
 
-            list.forEach((item, index) => {
-                total += parseFloat(item.price);
+            list.forEach((item) => {
                 // Estructuramos el formato: (id - nombre) requerido para Whatsapp
                 whatsappPropertiesText.push(`(${item.id} - ${item.name})`);
 
                 // Formateador de moneda MXN
                 const formattedPrice = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(item.price);
 
-                // Renderizado idéntico a tus listas limpias horizontales anteriores
                 html += `
                     <article class="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-xs hover:shadow-md transition-all duration-200">
                         <div class="flex flex-col sm:flex-row h-full">
@@ -110,29 +101,23 @@
 
             container.innerHTML = html;
 
-            // Actualizar contadores y totales en el DOM
+            // Actualizar contador en el DOM
             document.getElementById('items-count').innerText = list.length;
-            document.getElementById('total-price').innerText = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(total) + ' MXN';
 
             // GENERAR ENLACE DE WHATSAPP DINÁMICO
-            // Tu número de WhatsApp de atención (Reemplaza 521XXXXXXXXXX por el número real con código de país, ej. 5215512345678)
             const whatsappNumber = "527223834519"; 
             
             const stringProperties = whatsappPropertiesText.join(', ');
             const baseMessage = `Hola, me interesaron las propiedades: ${stringProperties}, podrias regalarme mas informacion`;
             
-            // Codificar el texto de forma segura para URLs
             const encodedMessage = encodeURIComponent(baseMessage);
             document.getElementById('whatsapp-btn').href = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
         }
 
         function removeFromList(id) {
             let list = JSON.parse(localStorage.getItem('solar_interest_list')) || [];
-            // Filtrar eliminando el elemento seleccionado
             list = list.filter(item => item.id !== id);
             localStorage.setItem('solar_interest_list', JSON.stringify(list));
-            
-            // Volver a pintar la interfaz reflejando los cambios
             renderInterests();
         }
     </script>
