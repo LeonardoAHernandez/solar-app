@@ -11,7 +11,7 @@
     </div>
 
     {{-- ========================================== --}}
-    {{-- CONTENEDOR MAESTRO (CENTRA Y LIMITA EL ANCHO COMO EN ADMIN) --}}
+    {{-- CONTENEDOR MAESTRO --}}
     {{-- ========================================== --}}
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
@@ -22,41 +22,71 @@
             <form action="{{ route('visitor.accommodations.index') }}" method="GET" class="bg-white border border-gray-100 rounded-2xl p-5 shadow-xs">
                 
                 {{-- Fila 1: Barra Principal --}}
-                <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
-                    <div class="md:col-span-7 relative">
+                <div class="flex gap-3 items-center flex-wrap sm:flex-nowrap">
+                    <div class="flex-1 min-w-[200px] relative">
                         <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">🔍</span>
                         <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar por destino, nombre..." 
                                class="w-full h-11 border border-gray-200 rounded-xl pl-9 pr-3 focus:ring-solar-brown focus:border-solar-brown text-sm">
                     </div>
 
-                    <div class="md:col-span-3">
-                        <select name="capacity" class="w-full h-11 border border-gray-200 rounded-xl px-3 focus:ring-solar-brown focus:border-solar-brown text-sm">
-                            <option value="">¿Cuántos huéspedes?</option>
-                            @for ($i = 1; $i <= 10; $i++)
-                                <option value="{{ $i }}" {{ request('capacity') == $i ? 'selected' : '' }}>{{ $i }}+ Personas</option>
-                            @endfor
-                        </select>
-                    </div>
-
-                    <div class="md:col-span-2 flex gap-2 h-11">
-                        <button type="submit" class="flex-1 bg-solar-brown text-white font-bold text-sm rounded-xl transition hover:opacity-90">
+                    <div class="flex gap-2 h-11 flex-shrink-0">
+                        <button type="submit" class="px-6 bg-solar-brown text-white font-bold text-sm rounded-xl transition hover:opacity-90">
                             Buscar
                         </button>
-                        <button type="button" id="btn-toggle-filters" class="px-3 bg-gray-50 hover:bg-gray-100 text-gray-600 rounded-xl transition text-sm" title="Filtros Avanzados">
-                            🎛️
+                        
+                        <button type="button" id="btn-toggle-filters" class="px-4 bg-gray-50 hover:bg-gray-100 text-gray-600 rounded-xl transition text-sm flex items-center gap-2 font-medium" title="Filtros Avanzados">
+                            <span>🎛️</span> <span class="hidden sm:inline">Filtros</span>
                         </button>
+
+                        {{-- NUEVO BOTÓN: Colocado estratégicamente al lado del botón de Filtros --}}
+                        @if(isset($isSearching) && $isSearching)
+                            <a href="{{ route('visitor.accommodations.index') }}" class="px-4 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl transition text-sm flex items-center gap-2 font-bold shadow-xs border border-red-100/50" title="Limpiar todos los filtros">
+                                <span>❌</span> <span class="hidden sm:inline">Limpiar</span>
+                            </a>
+                        @endif
                     </div>
                 </div>
 
                 {{-- Fila 2: Contenedor Desplegable --}}
                 <div id="advanced-filters" class="mt-5 pt-5 border-t border-gray-100 hidden">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-6 mb-4">
                         
+                        {{-- BLOQUE DE RANGOS INTERACTIVOS (Precio y Capacidad) --}}
+                        <div class="md:col-span-4 space-y-6 border-b md:border-b-0 md:border-r border-gray-100 pb-6 md:pb-0 md:pr-6">
+                            
+                            {{-- Selector de Rango de Precio --}}
+                            <div>
+                                <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Precio</h4>
+                                <div class="text-sm font-semibold text-gray-800 mb-3 font-raleway">
+                                    <span id="price-min-lbl">${{ number_format(request('min_price', 0)) }}</span> – 
+                                    <span id="price-max-lbl">${{ number_format(request('max_price', 10000)) }}</span><span id="price-plus-lbl">{{ request('max_price', 10000) >= 10000 ? ' y más' : '' }}</span>
+                                </div>
+                                <div class="relative w-full h-2 bg-gray-200 rounded-lg interaction-range-container">
+                                    <div id="price-track" class="absolute h-full bg-solar-brown rounded-lg" style="left: 0%; right: 0%;"></div>
+                                    <input type="range" id="min_price" name="min_price" min="0" max="10000" step="100" value="{{ request('min_price', 0) }}" 
+                                           class="absolute w-full appearance-none bg-transparent pointer-events-none top-0 h-2 accent-solar-brown custom-slider-thumb">
+                                    <input type="range" id="max_price" name="max_price" min="0" max="10000" step="100" value="{{ request('max_price', 10000) }}" 
+                                           class="absolute w-full appearance-none bg-transparent pointer-events-none top-0 h-2 accent-solar-brown custom-slider-thumb">
+                                </div>
+                            </div>
+
+                            {{-- Selector de Rango de Huéspedes --}}
+                            <div>
+                                <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Capacidad</h4>
+                                <div class="text-sm font-semibold text-gray-800 mb-2 font-raleway h-5">
+                                    <span id="capacity-lbl-prefix">Hasta</span><span id="capacity-lbl"> {{ request('capacity', $sliderMaxCapacity) }} huéspedes</span>
+                                </div>
+                                <input type="range" id="capacity" name="capacity" min="1" max="{{ $sliderMaxCapacity }}" step="1" value="{{ request('capacity', $sliderMaxCapacity) }}"
+                                       class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-solar-brown">
+                            </div>
+
+                        </div>
+
                         {{-- Servicios --}}
                         @if(isset($allServices) && $allServices->isNotEmpty())
-                        <div>
+                        <div class="md:col-span-4 border-b md:border-b-0 md:border-r border-gray-100 pb-6 md:pb-0 md:px-4">
                             <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Servicios</h4>
-                            <div class="grid grid-cols-2 gap-2 max-h-36 overflow-y-auto pr-2">
+                            <div class="grid grid-cols-1 gap-1.5 max-h-44 overflow-y-auto pr-2">
                                 @foreach ($allServices as $service)
                                     <label class="flex items-center gap-2 text-xs text-gray-600 cursor-pointer p-1.5 hover:bg-gray-50 rounded-md">
                                         <input type="checkbox" name="services[]" value="{{ $service->id }}" 
@@ -71,13 +101,13 @@
 
                         {{-- Etiquetas --}}
                         @if(isset($allTags) && $allTags->isNotEmpty())
-                        <div>
+                        <div class="md:col-span-4 md:pl-4">
                             <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Etiquetas</h4>
-                            <div class="space-y-3 max-h-36 overflow-y-auto pr-2">
+                            <div class="space-y-4 max-h-44 overflow-y-auto pr-2">
                                 @foreach ($allTags as $category => $tags)
                                     <div>
-                                        <h5 class="text-[10px] font-bold text-gray-400 uppercase mb-1 border-b border-gray-50 pb-0.5">{{ $category }}</h5>
-                                        <div class="grid grid-cols-2 gap-1">
+                                        <h5 class="text-[10px] font-bold text-gray-400 uppercase mb-1.5 border-b border-gray-50 pb-0.5">{{ $category }}</h5>
+                                        <div class="grid grid-cols-1 gap-1">
                                             @foreach ($tags as $tag)
                                                 <label class="flex items-center gap-2 text-xs text-gray-600 cursor-pointer p-1">
                                                     <input type="checkbox" name="tags[]" value="{{ $tag->id }}" 
@@ -93,18 +123,15 @@
                         </div>
                         @endif
                     </div>
-
-                    {{-- Limpiar filtros --}}
-                    @if(isset($isSearching) && $isSearching)
-                        <div class="flex justify-end mt-4 pt-4 border-t border-gray-50">
-                            <a href="{{ route('visitor.accommodations.index') }}" class="text-xs text-red-500 font-semibold hover:underline">
-                                ❌ Limpiar todos los filtros
-                            </a>
-                        </div>
-                    @endif
                 </div>
             </form>
         </div>
+
+        {{-- Estilos para superponer los selectores nativos del rango de precio --}}
+        <style>
+            .interaction-range-container input[type="range"]::-webkit-slider-thumb { pointer-events: auto; width: 18px; height: 18px; border-radius: 50%; border: 3px solid #fff; background: #8B5A2B; cursor: pointer; box-shadow: 0 0 4px rgba(0,0,0,0.3); }
+            .interaction-range-container input[type="range"]::-moz-range-thumb { pointer-events: auto; width: 18px; height: 18px; border-radius: 50%; border: 3px solid #fff; background: #8B5A2B; cursor: pointer; box-shadow: 0 0 4px rgba(0,0,0,0.3); }
+        </style>
 
         {{-- ========================================== --}}
         {{-- RENDERIZADO CONDICIONAL DE RESULTADOS --}}
@@ -230,33 +257,90 @@
                             </article>
                         @endforeach
                     </div>
-
-                    <div class="text-center mt-3 mb-12">
-                        <a href="#" class="btn btn-link text-decoration-none text-warning fw-bold">
-                            &lt; Ver más &gt;
-                        </a>
-                    </div>
                 @endforeach
             @endif
         @endif
 
     </div> {{-- FIN DEL CONTENEDOR MAESTRO --}}
 
-    {{-- Script JavaScript para Alternar el Acordeón de Filtros --}}
+    {{-- Script JavaScript --}}
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // 1. Control de Visibilidad del Desplegable
             const btnToggle = document.getElementById('btn-toggle-filters');
             const advancedFilters = document.getElementById('advanced-filters');
 
             if (btnToggle && advancedFilters) {
                 const urlParams = new URLSearchParams(window.location.search);
-                if (urlParams.has('services[]') || urlParams.has('tags[]')) {
+                if (urlParams.has('services[]') || urlParams.has('tags[]') || urlParams.has('min_price') || urlParams.has('max_price') || urlParams.has('capacity')) {
                     advancedFilters.classList.remove('hidden');
                 }
 
                 btnToggle.addEventListener('click', function () {
                     advancedFilters.classList.toggle('hidden');
                 });
+            }
+
+            // 2. Lógica Dinámica de Rango de Precio (Doble Slider Nátivo)
+            const minPriceInput = document.getElementById('min_price');
+            const maxPriceInput = document.getElementById('max_price');
+            const priceMinLbl = document.getElementById('price-min-lbl');
+            const priceMaxLbl = document.getElementById('price-max-lbl');
+            const pricePlusLbl = document.getElementById('price-plus-lbl');
+            const priceTrack = document.getElementById('price-track');
+
+            function updatePriceSlider() {
+                let minVal = parseInt(minPriceInput.value);
+                let maxVal = parseInt(maxPriceInput.value);
+
+                if (minVal > maxVal) {
+                    minPriceInput.value = maxVal;
+                    minVal = maxVal;
+                }
+
+                priceMinLbl.innerText = '$' + minVal.toLocaleString();
+                priceMaxLbl.innerText = '$' + maxVal.toLocaleString();
+                
+                if (maxVal >= 10000) {
+                    pricePlusLbl.innerText = ' y más';
+                } else {
+                    pricePlusLbl.innerText = '';
+                }
+
+                const minPercent = (minVal / minPriceInput.max) * 100;
+                const maxPercent = 100 - ((maxVal / maxPriceInput.max) * 100);
+                
+                priceTrack.style.left = minPercent + '%';
+                priceTrack.style.right = maxPercent + '%';
+            }
+
+            if (minPriceInput && maxPriceInput) {
+                minPriceInput.addEventListener('input', updatePriceSlider);
+                maxPriceInput.addEventListener('input', updatePriceSlider);
+                updatePriceSlider();
+            }
+
+            // 3. Lógica Dinámica del Rango de Huéspedes (Slider Simple)
+            const capacityInput = document.getElementById('capacity');
+            const capacityLbl = document.getElementById('capacity-lbl');
+            const capacityPrefix = document.getElementById('capacity-lbl-prefix');
+
+            if (capacityInput && capacityLbl) {
+                const maxValLimit = parseInt(capacityInput.max);
+
+                function updateCapacityLabel() {
+                    let val = parseInt(capacityInput.value);
+                    
+                    if (val >= maxValLimit) {
+                        capacityPrefix.innerText = "Cualquier cantidad de huéspedes";
+                        capacityLbl.innerText = "";
+                    } else {
+                        capacityPrefix.innerText = "Hasta ";
+                        capacityLbl.innerText = val + " huéspedes";
+                    }
+                }
+                capacityInput.addEventListener('input', updateCapacityLabel);
+                updateCapacityLabel();
             }
         });
     </script>
