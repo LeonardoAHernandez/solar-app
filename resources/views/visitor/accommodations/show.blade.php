@@ -155,8 +155,8 @@
         </div>
         @endif
 
-        {{-- SECCIÓN DE SERVICIOS --}}
-        <div id="services-section" class="border-t border-gray-100 pt-8 mt-6 space-y-8 pb-12">
+        {{-- 1. PRIMERO: SECCIÓN DE SERVICIOS QUE INCLUYE --}}
+        <div id="services-section" class="border-t border-gray-100 pt-8 mt-6 space-y-8 pb-4">
             <h3 class="text-2xl md:text-4xl text-solar-blue font-tenor tracking-wide text-center">
                 Servicios que incluye
             </h3>
@@ -180,9 +180,118 @@
             </div>
         </div>
 
-        {{-- CONTENEDOR ANCLA COLOCADO AL FINAL (Para que el botón se acople DEBAJO de servicios) --}}
-        <div id="sticky-anchor" class="w-full h-auto"></div>
+    </div> {{-- CERRAMOS MAX-W-7XL TEMPORALMENTE PARA EL FONDO ANCHO TOTAL DEL CALENDARIO --}}
 
+    {{-- 2. SEGUNDO: SECCIÓN CALENDARIO ANCHO TOTAL (W-SCREEN) --}}
+    @php
+        \Carbon\Carbon::setLocale('es');
+
+        $mesActual = \Carbon\Carbon::now();
+        $mesSiguiente = \Carbon\Carbon::now()->addMonth();
+
+        $diasTemporadaMedia = [];
+        $diasTemporadaAlta = [];
+
+        if (isset($seasons)) {
+            foreach ($seasons as $season) {
+                $inicio = \Carbon\Carbon::parse($season->start_date);
+                $fin = \App\Models\Season::find($season->id)->end_date;
+
+                while ($inicio->lte($fin)) {
+                    $fechaString = $inicio->toDateString();
+                    if ($season->type === 'mid') {
+                        $diasTemporadaMedia[$fechaString] = true;
+                    } elseif ($season->type === 'high') {
+                        $diasTemporadaAlta[$fechaString] = true;
+                    }
+                    $inicio->addDay();
+                }
+            }
+        }
+    @endphp
+
+    <div id="calendar-section" class="w-full bg-cover bg-center shadow-inner py-12 my-8 px-4" 
+         style="background-image: url('{{ asset('page-resources/img/peFondoCalendarios.webp') }}')">
+        
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                
+                @foreach ([$mesActual, $mesSiguiente] as $mesObjeto)
+                    @php
+                        $primerDiaDelMes = $mesObjeto->copy()->startOfMonth();
+                        $totalDiasMes = $mesObjeto->daysInMonth;
+                        $diaSemanaInicio = $primerDiaDelMes->dayOfWeekIso - 1; 
+                        $nombreMes = strtoupper($mesObjeto->isoFormat('MMMM YYYY'));
+                    @endphp
+
+                    {{-- Contenedor de Tarjeta de Mes --}}
+                    <div class="bg-[#ebdccb]/95 backdrop-blur-xs rounded-[2rem] p-6 shadow-xl flex flex-col items-center">
+                        <h3 class="text-lg font-bold text-[#0f2d3a] tracking-widest font-tenor mb-4">{{ $nombreMes }}</h3>
+                        
+                        <div class="w-full grid grid-cols-7 gap-y-3 text-center text-xs font-bold text-[#0f2d3a]/80">
+                            {{-- Días de la semana en Español --}}
+                            <span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span>
+                            
+                            <div class="col-span-7 border-b border-[#0f2d3a]/20 my-1"></div>
+
+                            {{-- Espacios vacíos de alineación --}}
+                            @for ($i = 0; $i < $diaSemanaInicio; $i++)
+                                <div></div>
+                            @endfor
+
+                            {{-- Días del mes --}}
+                            @for ($dia = 1; $dia <= $totalDiasMes; $dia++)
+                                @php
+                                    $fechaEvaluar = $mesObjeto->copy()->day($dia)->toDateString();
+                                    
+                                    $esMedia = isset($diasTemporadaMedia[$fechaEvaluar]);
+                                    $esAlta = isset($diasTemporadaAlta[$fechaEvaluar]);
+
+                                    $claseDia = "w-8 h-8 flex items-center justify-center rounded-full mx-auto transition-all text-sm ";
+                                    
+                                    if ($esAlta) {
+                                        $claseDia .= "bg-solar-blue text-white shadow-md font-black ring-2 ring-white/20";
+                                    } elseif ($esMedia) {
+                                        $claseDia .= "bg-solar-yellow text-solar-brown shadow-md font-black ring-2 ring-white/20";
+                                    } else {
+                                        $claseDia .= "text-solar-brown font-medium hover:bg-[#0f2d3a]/5";
+                                    }
+                                @endphp
+
+                                <div class="flex items-center justify-center">
+                                    <span class="{{ $claseDia }}">
+                                        {{ $dia }}
+                                    </span>
+                                </div>
+                            @endfor
+                        </div>
+                    </div>
+                @endforeach
+
+            </div>
+
+            {{-- Leyenda inferior --}}
+            <div class="flex justify-center flex-wrap gap-6 pt-2 text-xs font-bold font-raleway text-white bg-black/20 backdrop-blur-xs rounded-xl p-3 max-w-md mx-auto mt-8">
+                <div class="flex items-center gap-2">
+                    <span class="w-3.5 h-3.5 rounded-full bg-solar-yellow inline-block ring-1 ring-white"></span>
+                    <span>Temporada Media</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="w-3.5 h-3.5 rounded-full bg-solar-blue inline-block ring-1 ring-white"></span>
+                    <span>Temporada Alta</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="w-3.5 h-3.5 rounded-full bg-[#e4d4c3] border border-white inline-block"></span>
+                    <span>Tarifa Base</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- REABRIMOS EL MAX-W-7XL PARA EL CONTENEDOR ANCLA FINAL --}}
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {{-- CONTENEDOR ANCLA COLOCADO AL FINAL --}}
+        <div id="sticky-anchor" class="w-full h-auto"></div>
     </div>
 
     {{-- BARRA / BOTÓN FLOTANTE "ME INTERESA" --}}
@@ -221,34 +330,14 @@
                 draggable: true        
             });
 
-            // 2. LÓGICA DE ACOPLE INTELIGENTE DEBAJO DE SERVICIOS
+            // 2. LÓGICA DE ACOPLE INTELIGENTE DEBAJO DEL CALENDARIO
             const stickyBar = document.getElementById('interest-sticky-bar');
-            const servicesSection = document.getElementById('services-section');
+            const lastSection = document.getElementById('calendar-section');
             const anchor = document.getElementById('sticky-anchor');
 
-            if (stickyBar && servicesSection && anchor) {
-                const observer = new IntersectionObserver((entries) => {
-                    entries.forEach(entry => {
-                        // Cambiamos el comportamiento basándonos en si el bloque de servicios ya se cruzó
-                        if (entry.boundingClientRect.bottom > window.innerHeight) {
-                            // Sigue flotando abajo fijo si la parte baja de servicios no ha pasado
-                            stickyBar.className = "fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-100 p-4 shadow-2xl transition-all duration-300 z-40";
-                            document.body.appendChild(stickyBar); // Regresa al body
-                        } else {
-                            // Se acopla de manera estática y natural al final (Debajo de los servicios)
-                            stickyBar.className = "w-full relative bg-transparent border-none p-0 shadow-none transition-all duration-300 z-10 mt-6 mb-4";
-                            anchor.appendChild(stickyBar); // Se inyecta en el ancla final
-                        }
-                    });
-                }, {
-                    rootMargin: "0px 0px 0px 0px",
-                    threshold: 1.0 // Se activa exactamente cuando la sección se despliega completa
-                });
-
-                // Monitoreamos la ventana de scroll sobre la sección de servicios
+            if (stickyBar && lastSection && anchor) {
                 window.addEventListener('scroll', () => {
-                    const rect = servicesSection.getBoundingClientRect();
-                    // Si el fondo de la sección de servicios ya subió más allá del alto de la pantalla
+                    const rect = lastSection.getBoundingClientRect();
                     if (rect.bottom <= window.innerHeight) {
                         stickyBar.className = "w-full relative bg-transparent border-none p-0 shadow-none transition-all duration-300 z-10 mt-6 mb-4";
                         anchor.appendChild(stickyBar);

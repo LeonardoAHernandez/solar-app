@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Visitor;
 use App\Enums\AccommodationStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Accommodation;
+use App\Models\Season;
 use App\Models\Service;
 use App\Models\Tag;
 use Illuminate\Http\Request;
@@ -118,15 +119,33 @@ class AccommodationController extends Controller
     /**
      * Display the specified resource.
      */
+    /**
+     * Display the specified resource.
+     */
     public function show($id)
     {
-        // Buscamos el registro de forma manual por ID o por Slug
-        $accommodation = \App\Models\Accommodation::where('id', $id)
-            ->orWhere('slug', $id)
-            ->with(['images', 'services', 'details', 'tags'])
-            ->firstOrFail(); // Lanza un error 404 si no existe, ideal para producción
+        try {
+            // 1. Buscamos el registro
+            $accommodation = \App\Models\Accommodation::where('id', $id)
+                ->orWhere('slug', $id)
+                ->with(['images', 'services', 'details', 'tags'])
+                ->firstOrFail();
 
-        return view('visitor.accommodations.show', compact('accommodation'));
+            // 2. Obtener temporadas
+            $seasons = \App\Models\Season::all();
+
+            // 3. Intentar renderizar la vista
+            return view('visitor.accommodations.show', compact('accommodation', 'seasons'));
+
+        } catch (\Throwable $e) {
+            // Si truena en el controlador o dentro de las directivas Blade de la vista, se detiene aquí
+            dd([
+                'Mensaje de Error' => $e->getMessage(),
+                'Archivo donde falló' => $e->getFile(),
+                'Línea del error' => $e->getLine(),
+                'Traza abreviada' => array_slice($e->getTrace(), 0, 5)
+            ]);
+        }
     }
 
     /**
