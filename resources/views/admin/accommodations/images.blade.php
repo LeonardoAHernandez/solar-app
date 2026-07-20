@@ -22,6 +22,10 @@
 
             <input type="hidden" name="accommodation_id" value="{{ $accommodation->id }}">
 
+            <label for="images" class="block text-sm font-medium text-gray-700 mb-2">
+                Recuerda comprimirlas con <a href="https://squoosh.app/" target="_blank" class="text-blue-500 hover:underline">Squoosh</a>.
+            </label>
+
             <div class="flex justify-around items-center gap-4 mb-4">
                 <label>
                     <span class="btn btn-blue md:hidden cursor-pointer">

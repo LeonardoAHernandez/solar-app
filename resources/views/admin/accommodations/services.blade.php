@@ -153,6 +153,10 @@
                                                 placeholder="Clase CSS (Ej: fa-solid fa-wifi)"
                                                 class="w-full h-9 border border-gray-300 rounded-lg px-3 text-sm">
                                         </div>
+
+                                        <label for="new_icon_class" class="text-xs text-gray-500">
+                                            Para consultar los iconos disponibles, visita <a href="https://fontawesome.com/search?ic=free-collection" target="_blank" class="text-blue-500 hover:underline">Font Awesome</a>
+                                        </label>
                                     </div>
 
                                     <div class="flex items-center justify-between mt-2">
