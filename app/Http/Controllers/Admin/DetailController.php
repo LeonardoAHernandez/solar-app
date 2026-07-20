@@ -36,6 +36,7 @@ class DetailController extends Controller
 
     /**
      * Sincroniza las cantidades, guardando únicamente los que sean mayores a 0.
+     * Máximo 6 detalles por propiedad.
      */
     public function store(Request $request, Accommodation $accommodation)
     {
@@ -44,12 +45,10 @@ class DetailController extends Controller
             'quantities.*' => 'nullable|integer|min:0',
         ]);
 
-        // Estructura requerida por Laravel para guardar datos en pivote: [ id => ['quantity' => valor] ]
         $syncData = [];
 
         if ($request->has('quantities')) {
             foreach ($request->input('quantities') as $detailId => $quantity) {
-                // REGLA DE NEGOCIO: Únicamente guardamos si el número ingresado es mayor que 0
                 if ($quantity > 0) {
                     $syncData[$detailId] = [
                         'quantity' => $quantity
@@ -58,10 +57,16 @@ class DetailController extends Controller
             }
         }
 
+        // VALIDACIÓN DE NEGOCIO: Máximo 6 detalles con cantidad > 0
+        if (count($syncData) > 6) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'No puedes asignar más de 6 detalles a este alojamiento. Por favor, reduce la selección.');
+        }
+
         try {
             DB::beginTransaction();
 
-            // sync() inserta/actualiza los mayores a 0 y elimina automáticamente los que quedaron en 0
             $accommodation->details()->sync($syncData);
 
             DB::commit();
