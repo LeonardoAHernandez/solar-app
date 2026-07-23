@@ -105,6 +105,11 @@ class AccommodationController extends Controller
             'locationURL' => 'required',
         ]);
 
+        // Transformación automática de la URL de Google Maps a Embed
+        if (!empty($data['locationURL'])) {
+            $data['locationURL'] = $this->formatGoogleMapsUrl($data['locationURL']);
+        }
+
         $data['status'] = AccommodationStatus::BORRADOR->value;
 
         $accommodation = Accommodation::create($data);
@@ -112,6 +117,53 @@ class AccommodationController extends Controller
         return redirect()->route('admin.accommodations.edit', $accommodation);
     }
 
+    /**
+     * Convierte cualquier formato de URL de Google Maps (incluyendo pines de coordenadas) a Embed.
+     */
+    private function formatGoogleMapsUrl(?string $url): ?string
+    {
+        if (empty($url)) {
+            return null;
+        }
+
+        // 1. Si pegan el tag HTML <iframe> completo, extraemos solo la URL de src=""
+        if (str_contains($url, '<iframe')) {
+            preg_match('/src="([^"]+)"/', $url, $matches);
+            return $matches[1] ?? $url;
+        }
+
+        // 2. Si es un enlace acortado (maps.app.goo.gl o goo.gl), resolvemos la redirección real
+        if (str_contains($url, 'goo.gl')) {
+            try {
+                // Forzamos seguir redirecciones de la cabecera HTTP
+                $headers = get_headers($url, 1);
+                if (isset($headers['Location'])) {
+                    $url = is_array($headers['Location']) ? end($headers['Location']) : $headers['Location'];
+                }
+            } catch (\Throwable $e) {
+                // Si la solicitud falla, continua con la cadena original
+            }
+        }
+
+        // Decodificamos por si la URL trae caracteres escapados (%2F, %2C, etc)
+        $decodedUrl = urldecode($url);
+
+        // 3. Caso A: Si la URL contiene coordenadas explícitas en search/coordenadas o /@coordenadas
+        // Coincide con patrones como: /search/19.391008,+-99.538903 o @19.391008,-99.538903
+        if (preg_match('/(-?\d+\.\d+)\s*,\s*(-?\d+\.\d+)/', $decodedUrl, $matches)) {
+            $lat = $matches[1];
+            $lng = $matches[2];
+            return "https://maps.google.com/maps?q={$lat},{$lng}&z=16&output=embed";
+        }
+
+        // 4. Si ya es una URL embed válida
+        if (str_contains($url, 'google.com/maps/embed')) {
+            return $url;
+        }
+
+        // 5. Caso B: Para nombres de negocios, escuelas, o restaurantes sin coordenadas visibles
+        return "https://maps.google.com/maps?q=" . urlencode($url) . "&z=15&output=embed";
+    }
     /**
      * Display the specified resource.
      */
@@ -154,13 +206,17 @@ class AccommodationController extends Controller
             'locationURL' => 'required',
         ]);
 
+        // Transformación automática de la URL de Google Maps a Embed al actualizar
+        if (!empty($data['locationURL'])) {
+            $data['locationURL'] = $this->formatGoogleMapsUrl($data['locationURL']);
+        }
+
         $accommodation->update($data);
 
         session()->flash('flash.banner', 'Propiedad actualizada correctamente.');
 
         return redirect()->route('admin.accommodations.edit', $accommodation);
     }
-
     /**
      * Remove the specified resource from storage.
      */

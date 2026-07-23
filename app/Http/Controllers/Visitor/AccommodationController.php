@@ -126,13 +126,13 @@ class AccommodationController extends Controller
     {
         try {
             // 1. Buscamos el registro
-            $accommodation = \App\Models\Accommodation::where('id', $id)
+            $accommodation = Accommodation::where('id', $id)
                 ->orWhere('slug', $id)
                 ->with(['images', 'services', 'details', 'tags'])
                 ->firstOrFail();
 
             // 2. Obtener temporadas
-            $seasons = \App\Models\Season::all();
+            $seasons = Season::all();
 
             // 3. Intentar renderizar la vista
             return view('visitor.accommodations.show', compact('accommodation', 'seasons'));
