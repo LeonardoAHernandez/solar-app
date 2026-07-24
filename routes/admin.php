@@ -59,3 +59,8 @@ Route::patch('accommodations/{accommodation}/status', [AccommodationController::
 
 // Rutas de temporadas (temporadas altas/bajas)
 Route::resource('seasons', SeasonController::class);
+
+
+// Intereses compartidos
+Route::get('/shared-interests', [AccommodationController::class, 'sharedInterests'])
+    ->name('accommodations.sharedInterests');

@@ -1,16 +1,17 @@
 <x-visitor-layout>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8 min-h-[60vh]">
-        
+
         <div>
             <h1 class="text-3xl md:text-4xl text-solar-blue font-tenor tracking-wide">
                 Mi Lista de Interés
             </h1>
-            <p class="text-sm text-gray-500 font-raleway mt-1">Aquí puedes revisar las propiedades seleccionadas antes de contactar con un asesor.</p>
+            <p class="text-sm text-gray-500 font-raleway mt-1">Aquí puedes revisar las propiedades seleccionadas antes de
+                contactar con un asesor.</p>
         </div>
 
         {{-- CONTENEDOR PRINCIPAL DINÁMICO --}}
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-            
+
             {{-- LISTADO DE PROPIEDADES (IZQUIERDA) --}}
             <div id="interests-container" class="lg:col-span-2 space-y-4">
                 <div class="text-center py-12 bg-white rounded-2xl border border-dashed border-gray-200">
@@ -20,16 +21,17 @@
 
             {{-- RESUMEN Y BOTÓN WHATSAPP (DERECHA) --}}
             <div id="summary-card" class="bg-white border border-gray-100 p-6 rounded-2xl shadow-xs space-y-4 hidden">
-                <h3 class="text-lg font-bold text-gray-900 font-raleway border-b border-gray-50 pb-2">Hablar con un asesor</h3>
-                
+                <h3 class="text-lg font-bold text-gray-900 font-raleway border-b border-gray-50 pb-2">Hablar con un
+                    asesor</h3>
+
                 <div class="flex justify-between text-sm text-gray-600 font-medium">
                     <span>Propiedades seleccionadas:</span>
                     <span id="items-count">0</span>
                 </div>
 
                 {{-- BOTÓN DINÁMICO DE WHATSAPP --}}
-                <a id="whatsapp-btn" href="#" target="_blank" 
-                   class="w-full bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold py-3.5 rounded-xl shadow-md hover:shadow-lg transition flex items-center justify-center gap-2 text-center text-sm md:text-base">
+                <a id="whatsapp-btn" href="#" target="_blank"
+                    class="w-full bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold py-3.5 rounded-xl shadow-md hover:shadow-lg transition flex items-center justify-center gap-2 text-center text-sm md:text-base">
                     <i class="fa-brands fa-whatsapp text-lg"></i> Enviar lista por WhatsApp
                 </a>
             </div>
@@ -71,7 +73,10 @@
                 whatsappPropertiesText.push(`(${item.id} - ${item.name})`);
 
                 // Formateador de moneda MXN
-                const formattedPrice = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(item.price);
+                const formattedPrice = new Intl.NumberFormat('es-MX', {
+                    style: 'currency',
+                    currency: 'MXN'
+                }).format(item.price);
 
                 // Construimos la URL dinámica hacia la vista show.blade.php
                 // Si guardaste el slug en localStorage usará item.slug, de lo contrario usará el ID
@@ -124,11 +129,23 @@
             document.getElementById('items-count').innerText = list.length;
 
             // GENERAR ENLACE DE WHATSAPP DINÁMICO
-            const whatsappNumber = "527223834519"; 
-            
-            const stringProperties = whatsappPropertiesText.join(', ');
-            const baseMessage = `Hola, me interesaron las propiedades: ${stringProperties}, podrias regalarme mas informacion`;
-            
+            const whatsappNumber = "527223834519";
+
+            // 1. Extraemos solo los IDs numéricos: "1,3,5"
+            const idsArray = list.map(item => item.id);
+            const stringIds = idsArray.join(',');
+
+            // 2. Nombres formateados para la lectura del mensaje
+            // const stringProperties = list.map(item => `• ${item.name} (ID: ${item.id})`).join('\n');
+            const stringProperties = list.map(item => `• ${item.name}`).join('\n');
+
+            // 3. Generamos el enlace que abrirá el administrador en su panel
+            const adminShareUrl = `${window.location.origin}/admin/shared-interests?ids=${stringIds}`;
+
+            // 4. Redactamos el mensaje de WhatsApp con formato limpio
+            const baseMessage =
+                `¡Hola! Me gustaría solicitar información sobre la(s) siguiente(s) propiedad(es):\n\n${stringProperties}\n\nPuedes revisar la lista completa aquí:\n${adminShareUrl}`;
+
             const encodedMessage = encodeURIComponent(baseMessage);
             document.getElementById('whatsapp-btn').href = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
         }

@@ -242,4 +242,25 @@ class AccommodationController extends Controller
 
         return back()->with('flash.banner', 'El estatus de la propiedad ha sido actualizado.');
     }
+
+    /**
+     * Muestra la lista de propiedades seleccionadas por un cliente desde un enlace recibido.
+     */
+    public function sharedInterests(Request $request)
+    {
+        // Obtenemos el parámetro 'ids' (ej: "2,3" o "2%2C3")
+        $rawIds = $request->input('ids', '');
+
+        // Decodificamos la cadena por si incluye %2C
+        $decoded = urldecode($rawIds);
+
+        // Convertimos en array
+        $ids = array_filter(explode(',', $decoded), 'is_numeric');
+
+        $accommodations = Accommodation::whereIn('id', $ids)
+            ->with(['images', 'tags'])
+            ->get();
+
+        return view('admin.accommodations.shared-interests', compact('accommodations', 'rawIds'));
+    }
 }

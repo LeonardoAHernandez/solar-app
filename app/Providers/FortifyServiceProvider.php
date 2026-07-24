@@ -63,13 +63,14 @@ class FortifyServiceProvider extends ServiceProvider
                     /** @var \App\Models\User $user */
                     $user = Auth::user();
 
-                    // Si es administrador, redirige al panel de administración
+                    // Si es administrador, intenta ir a la URL prevista (intended)
+                    // y si no hay ninguna guardada, usa 'admin.accommodations.index' como respaldo.
                     if ($user && $user->isAdmin()) {
-                        return redirect()->route('admin.accommodations.index');
+                        return redirect()->intended(route('admin.accommodations.index'));
                     }
 
-                    // Si es usuario normal/visitante, redirige al catálogo
-                    return redirect()->route('visitor.accommodations.index');
+                    // Para usuarios normales/visitantes
+                    return redirect()->intended(route('visitor.accommodations.index'));
                 }
             };
         });
