@@ -73,25 +73,44 @@
                 // Formateador de moneda MXN
                 const formattedPrice = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(item.price);
 
+                // Construimos la URL dinámica hacia la vista show.blade.php
+                // Si guardaste el slug en localStorage usará item.slug, de lo contrario usará el ID
+                const targetSlugOrId = item.slug || item.id;
+                const detailUrl = `/accommodations/${targetSlugOrId}`;
+
                 html += `
-                    <article class="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-xs hover:shadow-md transition-all duration-200">
+                    <article class="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-xs hover:shadow-md transition-all duration-200 group">
                         <div class="flex flex-col sm:flex-row h-full">
-                            <div class="relative w-full sm:w-48 flex-shrink-0 aspect-video sm:aspect-square overflow-hidden bg-gray-900">
-                                <img src="${item.image}" class="w-full h-full object-cover object-center" alt="${item.name}">
-                            </div>
+                            
+                            {{-- Imagen clickeable para abrir la propiedad --}}
+                            <a href="${detailUrl}" class="relative w-full sm:w-48 flex-shrink-0 aspect-video sm:aspect-square overflow-hidden bg-gray-900 block">
+                                <img src="${item.image}" class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300" alt="${item.name}">
+                            </a>
+
                             <div class="flex-1 flex flex-col justify-between p-5">
                                 <div class="flex justify-between items-start gap-4">
                                     <div>
-                                        <h3 class="text-lg font-bold text-gray-950 font-raleway">${item.name}</h3>
+                                        {{-- Título clickeable hacia show.blade --}}
+                                        <a href="${detailUrl}" class="text-lg font-bold text-gray-950 font-raleway hover:text-solar-brown transition-colors">
+                                            ${item.name}
+                                        </a>
                                         <p class="text-xs text-gray-400 mt-0.5">ID Propiedad: ${item.id}</p>
                                     </div>
                                     <button onclick="removeFromList(${item.id})" class="text-gray-400 hover:text-red-500 text-sm transition" title="Eliminar de la lista">
                                         ❌ Quitar
                                     </button>
                                 </div>
+
                                 <div class="flex justify-between items-end pt-4 border-t border-gray-50 mt-4">
-                                    <span class="text-[10px] text-gray-400 uppercase font-bold tracking-wider font-raleway">Tarifa Base</span>
-                                    <p class="text-lg font-black text-gray-950">${formattedPrice} <span class="text-xs font-semibold text-gray-400 font-raleway">MXN</span></p>
+                                    <div>
+                                        <span class="text-[10px] text-gray-400 uppercase font-bold tracking-wider font-raleway block">Tarifa Base</span>
+                                        <p class="text-lg font-black text-gray-950">${formattedPrice} <span class="text-xs font-semibold text-gray-400 font-raleway">MXN</span></p>
+                                    </div>
+                                    
+                                    {{-- Botón adicional explícito "Ver detalles" --}}
+                                    <a href="${detailUrl}" class="text-xs bg-amber-50 text-solar-brown font-bold px-3 py-2 rounded-lg border border-amber-200/60 hover:bg-amber-100 transition">
+                                        Ver detalles →
+                                    </a>
                                 </div>
                             </div>
                         </div>
